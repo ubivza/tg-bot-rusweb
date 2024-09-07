@@ -1,51 +1,56 @@
 package com.example.tgbotrusweb.bot;
 
-import com.example.tgbotrusweb.bot.model.TelegramBotModel;
-import com.example.tgbotrusweb.handler.CommercialHandler;
-import com.example.tgbotrusweb.handler.DefaultHandler;
-import com.example.tgbotrusweb.handler.JoinerHandler;
-import com.example.tgbotrusweb.handler.NonCommercialHandler;
-import com.example.tgbotrusweb.keyboard.NavigationInlineMarkup;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.session.Session;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.BotSession;
+import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
+import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
+import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.session.TelegramLongPollingSessionBot;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
 @Slf4j
-public class TelegramBotGateway extends TelegramLongPollingSessionBot {
-  private final TelegramBotModel tgBot;
-  private final NavigationInlineMarkup inlineMarkup;
-  private final JoinerHandler joinerHandler;
-  private final CommercialHandler commercialHandler;
-  private final NonCommercialHandler nonCommercialHandler;
-  private final DefaultHandler handler;
+public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
+  private final TelegramClient telegramClient;
 
-  public TelegramBotGateway(TelegramBotModel tgBot, NavigationInlineMarkup inlineMarkup, CommercialHandler commercialHandler,
-      NonCommercialHandler nonCommercialHandler, JoinerHandler joinerHandler) {
-    this.tgBot = tgBot;
-    this.inlineMarkup = inlineMarkup;
-    this.commercialHandler = commercialHandler;
-    this.nonCommercialHandler = nonCommercialHandler;
-    handler = new DefaultHandler(inlineMarkup, joinerHandler, commercialHandler, nonCommercialHandler);
-    this.joinerHandler = joinerHandler;
+  public TelegramBotGateway() {
+    telegramClient = new OkHttpTelegramClient(getBotToken());
   }
 
-  @Override
-  public String getBotUsername() {
-    return tgBot.getName();
-  }
   @Override
   public String getBotToken() {
-    return tgBot.getToken();
+    return "6506450289:AAGd-Z7XXU8WjhtNZjfCTagkr5ljoATyTsk";
   }
 
   @Override
-  public void onUpdateReceived(Update update, Optional<Session> botSession) {
-    log.info(update + "");
-    log.info(botSession + "");
-    handler.handle(update, this);
+  public LongPollingUpdateConsumer getUpdatesConsumer() {
+    return this;
+  }
+
+  @Override
+  public void consume(Update update) {
+    log.info("" + update);
+    log.info("Chat id is: " + update.getMessage().getChatId());
+
+    if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().hasCaption()) {
+      if (update.getMessage().getCaption().startsWith("⚡️⚡️⚡️⚡️⚡️Verluste der ukrainischen Streitkräfte")) {
+        DeleteMessage deleteMessageRequest = new DeleteMessage(String.valueOf(-1002412995088L), update.getMessage().getMessageId());
+        try {
+          telegramClient.execute(deleteMessageRequest);
+        } catch (TelegramApiException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
+  }
+
+  @AfterBotRegistration
+  public void afterRegistration(BotSession botSession) {
+    System.out.println("Registered bot running state is: " + botSession.isRunning());
   }
 }
