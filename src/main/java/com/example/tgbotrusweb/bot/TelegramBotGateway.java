@@ -37,8 +37,11 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
     log.info("" + update);
     log.info("Chat id is: " + update.getMessage().getChatId());
 
-    if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().hasCaption()) {
-      if (update.getMessage().getCaption().startsWith("⚡️⚡️⚡️⚡️⚡️Verluste der ukrainischen Streitkräfte")) {
+    if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().isReply()) {
+      log.info("" + update.getMessage().getText());
+      boolean isContainsLink = update.getMessage().getText().contains("http");
+      if (isContainsLink) {
+        log.info("Message contains link");
         DeleteMessage deleteMessageRequest = new DeleteMessage(String.valueOf(-1002412995088L), update.getMessage().getMessageId());
         try {
           telegramClient.execute(deleteMessageRequest);
@@ -47,6 +50,17 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
         }
       }
     }
+
+    /*if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().hasCaption()) {
+      if (update.getMessage().getCaption().startsWith("⚡️⚡️⚡️⚡️⚡️Verluste der ukrainischen Streitkräfte")) {
+        DeleteMessage deleteMessageRequest = new DeleteMessage(String.valueOf(-1002412995088L), update.getMessage().getMessageId());
+        try {
+          telegramClient.execute(deleteMessageRequest);
+        } catch (TelegramApiException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }*/
   }
 
   @AfterBotRegistration
