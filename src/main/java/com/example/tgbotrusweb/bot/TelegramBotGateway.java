@@ -39,6 +39,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
 
     if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().isReply()) {
       log.info("" + update.getMessage().getText());
+      log.info("" + update.getMessage().getFrom());
       boolean isContainsLink = update.getMessage().getText().contains("http");
       if (isContainsLink) {
         log.info("Message contains link");
@@ -50,17 +51,6 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
         }
       }
     }
-
-    /*if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().hasCaption()) {
-      if (update.getMessage().getCaption().startsWith("⚡️⚡️⚡️⚡️⚡️Verluste der ukrainischen Streitkräfte")) {
-        DeleteMessage deleteMessageRequest = new DeleteMessage(String.valueOf(-1002412995088L), update.getMessage().getMessageId());
-        try {
-          telegramClient.execute(deleteMessageRequest);
-        } catch (TelegramApiException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    }*/
   }
 
   @AfterBotRegistration
