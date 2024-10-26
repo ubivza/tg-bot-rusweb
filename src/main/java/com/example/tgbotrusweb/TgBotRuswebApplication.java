@@ -11,10 +11,6 @@ public class TgBotRuswebApplication {
 
 	public static void main(String[] args) {
 		applicationContext = SpringApplication.run(TgBotRuswebApplication.class, args);
-		System.out.println(Channels.ENGLISH.id);
-		System.out.println(Channels.GERMAN.id);
-		System.out.println(Channels.ITALY.id);
-		System.out.println(Channels.FRENCH.id);
 
 		//displayAllBeans();
 	}
