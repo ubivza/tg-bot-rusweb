@@ -17,7 +17,7 @@ public class ReplyHandler extends Handler {
   public void handleUpdate(Comment comment) {
     if (isUpdateReply(comment)) {
       log.info("Got comment");
-      commentsCounter++;
+      commentsCounter++; //not thread safe, use AtomicInteger instead
       next.handleUpdate(comment);
     } else {
       log.info("Writing rules under post");

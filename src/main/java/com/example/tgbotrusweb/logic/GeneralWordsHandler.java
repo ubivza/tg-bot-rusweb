@@ -5,6 +5,7 @@ import com.example.tgbotrusweb.logic.interfaces.Handler;
 import com.example.tgbotrusweb.service.CommentRemover;
 import com.example.tgbotrusweb.utils.FileDataDownloader;
 import java.util.List;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,16 +17,17 @@ public class GeneralWordsHandler extends Handler {
 
   @Override
   public void handleUpdate(Comment comment) {
-    boolean isCommentBanned = true;
+    boolean isCommentNotBanned = true;
     for (String s : generalWords) {
       String commentTextLowerCase = comment.getUpdate().getMessage().getText().toLowerCase();
-      if (commentTextLowerCase.contains(s.toLowerCase())) {
+      if (Pattern.compile("\\b" + s.toLowerCase() + "\\b").matcher(commentTextLowerCase).find()) {
         log.info("Comment contains link and general word: " + s);
-        isCommentBanned = false;
+        isCommentNotBanned = false;
         commentRemover.handle(comment);
+        break;
       }
     }
-    if (isCommentBanned) {
+    if (isCommentNotBanned) {
       next.handleUpdate(comment);
     }
   }

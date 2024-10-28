@@ -5,6 +5,8 @@ import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -20,8 +22,8 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Slf4j
 public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
   private final TelegramClient telegramClient;
-
   private final ReplyHandler replyHandler;
+  private static final Executor executor = Executors.newFixedThreadPool(50);
 
   public TelegramBotGateway(ReplyHandler replyHandler) {
     this.replyHandler = replyHandler;
@@ -43,7 +45,6 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
     //TODO
     //here check if update is coming from one of our channels, else ignore
     log.info("Chat id is: " + update.getMessage().getChatId());
-    log.info("" + update.getMessage().getFrom());
     if (isUpdateFromOurChannel(update)) {
       replyHandler.handleUpdate(Comment.builder()
           .update(update)
@@ -52,31 +53,23 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
           .build());
     }
 
-
-
-
-    /*log.info("" + update);
-    log.info("Chat id is: " + update.getMessage().getChatId());
-
-    if (update.getMessage().getChatId() == (-1002412995088L) && update.getMessage().isReply()) {
-      log.info("" + update.getMessage().getText());
-      log.info("" + update.getMessage().getFrom());
-      boolean isContainsLink = update.getMessage().getText().contains("http");
-      if (isContainsLink) {
-        log.info("Message contains link");
-        DeleteMessage deleteMessageRequest = new DeleteMessage(String.valueOf(-1002412995088L), update.getMessage().getMessageId());
-        try {
-          telegramClient.execute(deleteMessageRequest);
-        } catch (TelegramApiException e) {
-          throw new RuntimeException(e);
-        }
+    /*Runnable task = () -> {
+      if (isUpdateFromOurChannel(update)) {
+        replyHandler.handleUpdate(Comment.builder()
+            .update(update)
+            .client(telegramClient)
+            .channel(getChannel(update))
+            .build());
       }
-    }*/
+    };
+    executor.execute(task);*/
   }
 
   @AfterBotRegistration
   public void afterRegistration(BotSession botSession) {
-    System.out.println("Registered bot running state is: " + botSession.isRunning());
+    log.info("Registered bot running state is: " + botSession.isRunning());
+    log.info("Available processors: " + Runtime.getRuntime().availableProcessors());
+    log.info("Total memory: " + Runtime.getRuntime().totalMemory());
   }
 
   private Channels getChannel(Update update) {

@@ -21,6 +21,7 @@ public class RulesCommentWriter {
       + "\n"
       + "\uD83D\uDCF1 InfoDefenseDEUTSCH\n"
       + "\uD83D\uDCF1 InfoDefense";
+
   public void writeRulesInComments(Comment comment) {
     //TODO make rules writer under every post relying on which channel it belongs to
     //need to make message using entities like this src/main/resources/example_message.png
