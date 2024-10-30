@@ -1,7 +1,10 @@
 package com.example.tgbotrusweb.bot;
 
 import com.example.tgbotrusweb.logic.ReplyHandler;
+import com.example.tgbotrusweb.logic.admin.AddWordsInFile;
 import com.example.tgbotrusweb.logic.domain.Comment;
+import com.example.tgbotrusweb.logic.domain.Message;
+import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.util.Arrays;
 import java.util.Objects;
@@ -21,12 +24,15 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Component
 @Slf4j
 public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
+
   private final TelegramClient telegramClient;
   private final ReplyHandler replyHandler;
+  private final AddWordsInFile addWordsInFile;
   private static final Executor executor = Executors.newFixedThreadPool(50);
 
-  public TelegramBotGateway(ReplyHandler replyHandler) {
+  public TelegramBotGateway(ReplyHandler replyHandler, AddWordsInFile addWordsInFile) {
     this.replyHandler = replyHandler;
+    this.addWordsInFile = addWordsInFile;
     telegramClient = new OkHttpTelegramClient(getBotToken());
   }
 
@@ -51,6 +57,12 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
           .client(telegramClient)
           .channel(getChannel(update))
           .build());
+    } else if (isUpdateFromOurAdminsChannel(update)) {
+      addWordsInFile.addWordsInFile(Message.builder().update(update)
+          .client(telegramClient)
+          .channel(getAdminsChannel(update))
+          .build());
+
     }
 
     /*Runnable task = () -> {
@@ -91,4 +103,23 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private boolean isUpdateFromOurChannel(Update update) {
     return Arrays.stream(Channels.values()).filter(x -> x != Channels.ADMIN).map(Channels::getId).toList().contains(update.getMessage().getChatId());
   }
+
+  private AdminsChannels getAdminsChannel(Update update) {
+    if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ITALY.getId())) {
+      return AdminsChannels.ITALY;
+    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GERMAN.getId())) {
+      return AdminsChannels.GERMAN;
+    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.FRENCH.getId())) {
+      return AdminsChannels.FRENCH;
+    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ENGLISH.getId())) {
+      return AdminsChannels.ENGLISH;
+    } else {
+      throw new RuntimeException("Message thread id is not valid");
+    }
+  }
+
+  private boolean isUpdateFromOurAdminsChannel(Update update) {
+    return update.getMessage().getChatId().equals(Channels.ADMIN.getId());
+  }
+
 }
