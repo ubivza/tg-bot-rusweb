@@ -2,6 +2,7 @@ package com.example.tgbotrusweb.logic.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.example.tgbotrusweb.logic.domain.admin.InputValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

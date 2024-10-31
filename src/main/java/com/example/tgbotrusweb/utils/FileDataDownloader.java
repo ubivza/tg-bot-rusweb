@@ -7,53 +7,35 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class FileDataDownloader {
-  public static List<String> readFromGeneralFile() {
+
+  private static final String RESOURCE_PATH = "src/main/resources/words/";
+
+  public static List<String> readFromFile(String filename) {
     try {
-      return Files.readAllLines(Paths.get("src/main/resources/words/general_words"),
-          StandardCharsets.UTF_8);
+      return Files.readAllLines(Paths.get(RESOURCE_PATH + filename), StandardCharsets.UTF_8);
     } catch (IOException e) {
-      System.out.println("File not found");
+      System.err.println("File not found: " + filename);
       throw new RuntimeException(e);
     }
+  }
+
+  public static List<String> readFromGeneralFile() {
+    return readFromFile("general_words");
   }
 
   public static List<String> readFromGermanFile() {
-    try {
-      return Files.readAllLines(Paths.get("src/main/resources/words/german_words"),
-          StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      System.out.println("File not found");
-      throw new RuntimeException(e);
-    }
+    return readFromFile("german_words");
   }
 
   public static List<String> readFromItalianFile() {
-    try {
-      return Files.readAllLines(Paths.get("src/main/resources/words/italian_words"),
-          StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      System.out.println("File not found");
-      throw new RuntimeException(e);
-    }
+    return readFromFile("italian_words");
   }
 
   public static List<String> readFromFrenchFile() {
-    try {
-      return Files.readAllLines(Paths.get("src/main/resources/words/french_words"),
-          StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      System.out.println("File not found");
-      throw new RuntimeException(e);
-    }
+    return readFromFile("french_words");
   }
 
   public static List<String> readFromEnglishFile() {
-    try {
-      return Files.readAllLines(Paths.get("src/main/resources/words/english_words"),
-          StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      System.out.println("File not found");
-      throw new RuntimeException(e);
-    }
+    return readFromFile("english_words");
   }
 }

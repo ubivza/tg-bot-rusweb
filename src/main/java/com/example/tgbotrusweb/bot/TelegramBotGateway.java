@@ -1,9 +1,9 @@
 package com.example.tgbotrusweb.bot;
 
 import com.example.tgbotrusweb.logic.ReplyHandler;
-import com.example.tgbotrusweb.logic.admin.AddWordsInFile;
+import com.example.tgbotrusweb.logic.admin.WordHandler;
 import com.example.tgbotrusweb.logic.domain.Comment;
-import com.example.tgbotrusweb.logic.domain.Message;
+import com.example.tgbotrusweb.logic.domain.admin.Message;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.util.Arrays;
@@ -27,12 +27,12 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
 
   private final TelegramClient telegramClient;
   private final ReplyHandler replyHandler;
-  private final AddWordsInFile addWordsInFile;
+  private final WordHandler wordHandler;
   private static final Executor executor = Executors.newFixedThreadPool(50);
 
-  public TelegramBotGateway(ReplyHandler replyHandler, AddWordsInFile addWordsInFile) {
+  public TelegramBotGateway(ReplyHandler replyHandler, WordHandler wordHandler) {
     this.replyHandler = replyHandler;
-    this.addWordsInFile = addWordsInFile;
+    this.wordHandler = wordHandler;
     telegramClient = new OkHttpTelegramClient(getBotToken());
   }
 
@@ -57,8 +57,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
           .client(telegramClient)
           .channel(getChannel(update))
           .build());
-    } else if (isUpdateFromOurAdminsChannel(update)) {
-      addWordsInFile.addWordsInFile(Message.builder().update(update)
+    } else if (isUpdateFromOurAdminsChannel(update)) { //TODO
+      wordHandler.handleAddWordsCommand(Message.builder().update(update)
           .client(telegramClient)
           .channel(getAdminsChannel(update))
           .build());

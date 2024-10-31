@@ -1,4 +1,4 @@
-package com.example.tgbotrusweb.logic.admin;
+package com.example.tgbotrusweb.logic.domain.admin;
 
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.example.tgbotrusweb.logic.domain;
+package com.example.tgbotrusweb.logic.domain.admin;
 
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import lombok.Builder;
