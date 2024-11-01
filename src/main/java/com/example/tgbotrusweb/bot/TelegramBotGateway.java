@@ -3,7 +3,7 @@ package com.example.tgbotrusweb.bot;
 import com.example.tgbotrusweb.logic.ReplyHandler;
 import com.example.tgbotrusweb.logic.admin.WordHandler;
 import com.example.tgbotrusweb.logic.domain.Comment;
-import com.example.tgbotrusweb.logic.domain.admin.Message;
+import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.util.Arrays;
@@ -58,7 +58,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
           .channel(getChannel(update))
           .build());
     } else if (isUpdateFromOurAdminsChannel(update)) { //TODO
-      wordHandler.handleAddWordsCommand(Message.builder().update(update)
+      wordHandler.handleAddWordsCommand(AdminMessage.builder().update(update)
           .client(telegramClient)
           .channel(getAdminsChannel(update))
           .build());

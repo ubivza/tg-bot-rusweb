@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Data
 @Builder
-public class Message {
+public class AdminMessage {
 
   private Update update;
   private TelegramClient client;

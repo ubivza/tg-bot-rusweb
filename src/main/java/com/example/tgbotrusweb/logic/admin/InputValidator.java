@@ -1,4 +1,4 @@
-package com.example.tgbotrusweb.logic.domain.admin;
+package com.example.tgbotrusweb.logic.admin;
 
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InputValidator {
 
-  private static final String VALID_WORDS_REGEX = "^([\\p{L}\\d_\\s]+;?)+$";
+  private static final String VALID_WORDS_REGEX = "^/add\\s([\\p{L}\\d_\\s]+;?)+$";
 
   /**
    * Проверяет, соответствует ли входной текст заданному формату.
