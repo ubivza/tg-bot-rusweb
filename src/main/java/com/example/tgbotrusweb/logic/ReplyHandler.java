@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReplyHandler extends Handler {
   private final RulesCommentWriter commentWriter;
+  private static String previousMediaGroupId = "";
+  private static final Long CHANNEL_ID = 777000L;
 
   private Long commentsCounter = 0L;
 
@@ -17,15 +19,31 @@ public class ReplyHandler extends Handler {
   public void handleUpdate(Comment comment) {
     if (isUpdateReply(comment)) {
       log.info("Got comment");
-      commentsCounter++; //not thread safe, use AtomicInteger instead
+      commentsCounter++;
       next.handleUpdate(comment);
     } else {
-      log.info("Writing rules under post");
-      commentWriter.writeRulesInComments(comment);
+      if (isSenderChannel(comment)) {
+        if (isPreviousMessageNotTheSameMediaGroupId(comment)) {
+          log.info("Writing rules under post");
+          previousMediaGroupId = comment.getUpdate().getMessage().getMediaGroupId();
+          commentWriter.writeRulesInComments(comment);
+        }
+      }
     }
   }
 
   private boolean isUpdateReply(Comment comment) {
     return comment.getUpdate().getMessage().isReply();
+  }
+
+  /*
+    Проверяет совпадает ли mediaGroupId текущего сообщения с прошлым
+   */
+  private boolean isPreviousMessageNotTheSameMediaGroupId(Comment comment) {
+    return previousMediaGroupId == null || !(previousMediaGroupId.equals(comment.getUpdate().getMessage().getMediaGroupId()));
+  }
+
+  private boolean isSenderChannel(Comment comment) {
+    return comment.getUpdate().getMessage().getFrom().getId().equals(CHANNEL_ID);
   }
 }

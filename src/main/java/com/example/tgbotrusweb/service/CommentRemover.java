@@ -15,13 +15,11 @@ public class CommentRemover {
 
   public void handle(Comment comment) {
     log.info("I'm sending message to admin group, deleting comment and banning sender");
-    //TODO send text and user to ADMIN group
-    long start = System.currentTimeMillis();
     String userName = comment.getUpdate().getMessage().getFrom().getUserName();
     long id = comment.getUpdate().getMessage().getFrom().getId();
     SendMessage sendMessageRequest = new SendMessage(String.valueOf(Channels.ADMIN.getId()),
         "Comment content: " + comment.getUpdate().getMessage().getText() +
-            " ; Comment written by: @" + userName + " ; Id: " + id);
+            " ; Comment written by: @" + userName + " ; Id: " + id + " ; In channel: " + comment.getChannel().name());
     try {
       comment.getClient().execute(sendMessageRequest);
     } catch (TelegramApiException e) {
@@ -37,7 +35,6 @@ public class CommentRemover {
       throw new RuntimeException(e);
     }
 
-    //TODO Ban user that send comment
     BanChatMember banChatMember = new BanChatMember(chatId, comment.getUpdate().getMessage().getFrom().getId());
     banChatMember.setRevokeMessages(true);
     try {
@@ -45,6 +42,5 @@ public class CommentRemover {
     } catch (TelegramApiException e) {
       throw new RuntimeException(e);
     }
-    log.info("Time to delete comment: " + ((System.currentTimeMillis() - start)/1000));
   }
 }

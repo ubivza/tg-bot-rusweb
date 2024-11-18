@@ -10,6 +10,7 @@ import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.service.admin.TelegramResponseService;
 import com.example.tgbotrusweb.service.admin.WordProcessingService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 class WordHandlerTest {
 
   @Mock

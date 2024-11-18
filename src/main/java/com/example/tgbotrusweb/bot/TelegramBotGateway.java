@@ -48,21 +48,20 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
 
   @Override
   public void consume(Update update) {
-    //TODO
-    //here check if update is coming from one of our channels, else ignore
-    log.info("Chat id is: " + update.getMessage().getChatId());
-    if (isUpdateFromOurChannel(update)) {
-      replyHandler.handleUpdate(Comment.builder()
-          .update(update)
-          .client(telegramClient)
-          .channel(getChannel(update))
-          .build());
-    } else if (isUpdateFromOurAdminsChannel(update)) { //TODO
-      wordHandler.handleAddWordsCommand(AdminMessage.builder().update(update)
-          .client(telegramClient)
-          .channel(getAdminsChannel(update))
-          .build());
-
+    if (update.hasMessage()) {
+      if (isUpdateFromOurChannel(update)) {
+        replyHandler.handleUpdate(Comment.builder()
+            .update(update)
+            .client(telegramClient)
+            .channel(getChannel(update))
+            .build());
+      } else if (isUpdateFromOurAdminsChannel(update)) {
+        wordHandler.handleAddWordsCommand(AdminMessage.builder()
+            .update(update)
+            .client(telegramClient)
+            .channel(getAdminsChannel(update))
+            .build());
+      }
     }
 
     /*Runnable task = () -> {
@@ -113,6 +112,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
       return AdminsChannels.FRENCH;
     } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ENGLISH.getId())) {
       return AdminsChannels.ENGLISH;
+    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GENERAL.getId())) {
+      return AdminsChannels.GENERAL;
     } else {
       throw new RuntimeException("Message thread id is not valid");
     }

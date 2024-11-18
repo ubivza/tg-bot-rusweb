@@ -1,4 +1,10 @@
-FROM openjdk:17
-COPY /build/libs/tg-bot-rusweb-0.0.1-SNAPSHOT.jar app.jar
+FROM eclipse-temurin:17 as jre-build
+#Change .jar name depends on which container you will run#########
 WORKDIR /app
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY /build/libs/tg-bot-rusweb-0.0.1-SNAPSHOT.jar com.jar
+COPY /src/main/resources/words/english_words /app/src/main/resources/words/english_words
+COPY /src/main/resources/words/french_words /app/src/main/resources/words/french_words
+COPY /src/main/resources/words/general_words /app/src/main/resources/words/general_words
+COPY /src/main/resources/words/german_words /app/src/main/resources/words/german_words
+COPY /src/main/resources/words/italian_words /app/src/main/resources/words/italian_words
+ENTRYPOINT ["java","-jar","/app/com.jar"]

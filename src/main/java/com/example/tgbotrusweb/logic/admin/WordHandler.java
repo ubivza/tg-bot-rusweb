@@ -1,5 +1,7 @@
 package com.example.tgbotrusweb.logic.admin;
 
+import com.example.tgbotrusweb.logic.GeneralWordsHandler;
+import com.example.tgbotrusweb.logic.UniqueChannelWordsHandler;
 import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.service.admin.TelegramResponseService;
@@ -16,6 +18,8 @@ public class WordHandler {
   private final WordProcessingService wordProcessingService;
   private final TelegramResponseService telegramResponseService;
   private final InputValidator inputValidator;
+  private final UniqueChannelWordsHandler uniqueChannelWordsHandler;
+  private final GeneralWordsHandler generalWordsHandler;
 
   /**
    * Обрабатывает команду добавления слов.
@@ -35,6 +39,17 @@ public class WordHandler {
     }
 
     String responseMessage = wordProcessingService.processAndSaveWords(inputText, channel);
+    updateActualWordList(channel);
     telegramResponseService.sendResponse(adminMessage, responseMessage);
+  }
+
+  private void updateActualWordList(AdminsChannels channels) {
+    switch (channels) {
+      case ENGLISH -> uniqueChannelWordsHandler.updateEnglishWords();
+      case FRENCH -> uniqueChannelWordsHandler.updateFrenchWords();
+      case ITALY -> uniqueChannelWordsHandler.updateItalianWords();
+      case GERMAN -> uniqueChannelWordsHandler.updateGermanWords();
+      case GENERAL -> generalWordsHandler.updateWords();
+    }
   }
 }

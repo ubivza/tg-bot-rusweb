@@ -1,5 +1,6 @@
 package com.example.tgbotrusweb;
 
+import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +12,6 @@ public class TgBotRuswebApplication {
 
 	public static void main(String[] args) {
 		applicationContext = SpringApplication.run(TgBotRuswebApplication.class, args);
-
 		//displayAllBeans();
 	}
 

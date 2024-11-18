@@ -1,8 +1,7 @@
 package com.example.tgbotrusweb.logic.repository;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -32,7 +31,9 @@ public class WordFileRepository {
       return message;
     }
 
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+    return save(fileName, newWords, duplicateWords);
+
+    /*try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
       for (String word : newWords) {
         writer.write(word);
         writer.newLine();
@@ -41,6 +42,43 @@ public class WordFileRepository {
       return "New words \"" + String.join(", ", newWords) + "\" successfully added to file. " +
           (duplicateWords.isEmpty() ? "" : "These words already exist: " + String.join(", ", duplicateWords));
     } catch (IOException e) {
+      log.error("File write error: {}", e.getMessage());
+      return "Error saving words: " + e.getMessage();
+    }*/
+  }
+
+  private static String save(String fileName, Set<String> newWords, Set<String> duplicateWords) {
+    try (RandomAccessFile file = new RandomAccessFile(fileName, "rw")) {
+      long fileLength = file.length();
+      boolean isNewLineNeeded = true;
+
+      if (fileLength > 0) {
+        // Move the cursor to the last character
+        file.seek(fileLength - 1);
+        char lastChar = (char) file.readByte();
+
+        // Check if the last character is a newline
+        isNewLineNeeded = lastChar != '\n';
+      }
+
+      // Move the cursor to the end of the file
+      file.seek(fileLength);
+
+      // Write a newline if needed
+      if (isNewLineNeeded) {
+        file.write(System.lineSeparator().getBytes());
+      }
+
+      // Write new content
+      for (String word : newWords) {
+        file.write(word.getBytes());
+        file.write(System.lineSeparator().getBytes());
+      }
+      log.info("New words added: {}", String.join(", ", newWords));
+      return "New words \"" + String.join(", ", newWords) + "\" successfully added to file. " +
+          (duplicateWords.isEmpty() ? "" : "These words already exist: " + String.join(", ", duplicateWords));
+    } catch (IOException e) {
+      e.printStackTrace();
       log.error("File write error: {}", e.getMessage());
       return "Error saving words: " + e.getMessage();
     }

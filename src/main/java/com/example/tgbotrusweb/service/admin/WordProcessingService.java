@@ -27,7 +27,6 @@ public class WordProcessingService {
     Set<String> duplicateWords = findDuplicates(inputWords, existingWords);
     Set<String> newWords = findNewWords(inputWords, existingWords);
 
-    System.out.println(newWords.isEmpty());
     return wordFileRepository.saveNewWords(fileName, newWords, duplicateWords);
   }
 
@@ -47,6 +46,7 @@ public class WordProcessingService {
       case FRENCH -> "src/main/resources/words/french_words";
       case GERMAN -> "src/main/resources/words/german_words";
       case ENGLISH -> "src/main/resources/words/english_words";
+      case GENERAL -> "src/main/resources/words/general_words";
     };
   }
 

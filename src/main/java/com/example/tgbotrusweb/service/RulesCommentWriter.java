@@ -17,24 +17,13 @@ public class RulesCommentWriter {
       + "\n"
       + "https://t.me/infodefGERMANY/7063\n"
       + "\n"
-      + "\uD83D\uDCCDAus aktuellem Anlass sehen wir die Befolgungspflicht der Regeln für jeden Nutzer als bindend, anderenfalls behält sich die Redaktion das Recht vor, ihn zu sperren.\n"
-      + "\n"
-      + "\uD83D\uDCF1 InfoDefenseDEUTSCH\n"
-      + "\uD83D\uDCF1 InfoDefense";
+      + "\uD83D\uDCCDAus aktuellem Anlass sehen wir die Befolgungspflicht der Regeln für jeden Nutzer als bindend, anderenfalls behält sich die Redaktion das Recht vor, ihn zu sperren.";
 
   public void writeRulesInComments(Comment comment) {
-    //TODO make rules writer under every post relying on which channel it belongs to
-    //need to make message using entities like this src/main/resources/example_message.png
     SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), rulesMessage);
     sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
     MessageEntity boldText = new MessageEntity("bold", rulesMessage.indexOf("Liebe"), rulesMessage.indexOf("sperren.") + 6);
-    MessageEntity linksInWords = new MessageEntity("text_link", rulesMessage.indexOf("InfoDefense"), 18, "https://t.me/InfoDefGermany",
-        null, null, null, "InfoDefenseDEUTSCH");
-    MessageEntity linksInWords2 = new MessageEntity("text_link", rulesMessage.lastIndexOf("InfoDefense"), 11, "https://t.me/infoDefALL",
-        null, null, null, "InfoDefense");
-    MessageEntity italicText = new MessageEntity("italic", rulesMessage.indexOf("InfoDefense"), 18);
-    MessageEntity italicText2 = new MessageEntity("italic", rulesMessage.lastIndexOf("InfoDefense"), 11);
-    sendRulesMessage.setEntities(List.of(boldText, linksInWords, linksInWords2, italicText2, italicText));
+    sendRulesMessage.setEntities(List.of(boldText));
     try {
       comment.getClient().execute(sendRulesMessage);
     } catch (TelegramApiException e) {

@@ -8,7 +8,8 @@ public enum AdminsChannels {
   ITALY,
   FRENCH,
   GERMAN,
-  ENGLISH;
+  ENGLISH,
+  GENERAL;
 
   public final int id;
 
