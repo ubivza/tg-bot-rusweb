@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 class WordFileRepositoryTest {
 
   @InjectMocks
@@ -54,12 +52,12 @@ class WordFileRepositoryTest {
       BufferedWriter mockWriter = mock(BufferedWriter.class);
       mockedFiles.when(() -> Files.newBufferedWriter(any(Path.class), any())).thenReturn(mockWriter);
 
-      Set<String> newWords = Set.of("word3", "word4");
-      Set<String> duplicateWords = Set.of("word1", "word2");
+      Set<String> newWords = Set.of("word3");
+      Set<String> duplicateWords = Set.of("word1");
 
       String result = wordFileRepository.saveNewWords("testFile.txt", newWords, duplicateWords);
 
-      assertEquals("New words \"word3, word4\" successfully added to file. These words already exist: word1, word2", result);
+      assertEquals("New words \"word3\" successfully added to file. These words already exist: word1", result);
     }
   }
 

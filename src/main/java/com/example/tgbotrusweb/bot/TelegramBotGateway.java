@@ -56,7 +56,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
             .channel(getChannel(update))
             .build());
       } else if (isUpdateFromOurAdminsChannel(update)) {
-        wordHandler.handleAddWordsCommand(AdminMessage.builder()
+        wordHandler.handleCommand(AdminMessage.builder()
             .update(update)
             .client(telegramClient)
             .channel(getAdminsChannel(update))

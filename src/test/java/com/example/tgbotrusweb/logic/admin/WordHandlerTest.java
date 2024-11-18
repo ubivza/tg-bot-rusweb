@@ -6,11 +6,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.tgbotrusweb.logic.UniqueChannelWordsHandler;
 import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.service.admin.TelegramResponseService;
 import com.example.tgbotrusweb.service.admin.WordProcessingService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 class WordHandlerTest {
 
   @Mock
@@ -30,6 +29,9 @@ class WordHandlerTest {
 
   @Mock
   private InputValidator inputValidator;
+
+  @Mock
+  private UniqueChannelWordsHandler uniqueChannelWordsHandler;
 
   @InjectMocks
   private WordHandler wordHandler;
@@ -46,7 +48,7 @@ class WordHandlerTest {
     when(wordProcessingService.processAndSaveWords(inputText, channel)).thenReturn(responseMessage);
 
     // Act
-    wordHandler.handleAddWordsCommand(adminMessage);
+    wordHandler.handleCommand(adminMessage);
 
     // Assert
     verify(inputValidator).isValidWordsInput(inputText);
@@ -55,18 +57,38 @@ class WordHandlerTest {
   }
 
   @Test
-  void handleAddWordsCommand_InvalidInput_ErrorResponse() {
+  void handleShowWordsCommand_ValidInput_Success() {
+    // Arrange
+    String inputText = "/show";
+    AdminsChannels channel = AdminsChannels.ENGLISH;
+    AdminMessage adminMessage = createMessage(inputText, channel);
+    String responseMessage = "No words have been added yet.";
+
+    when(inputValidator.isValidWordsInput(inputText)).thenReturn(true);
+    when(wordProcessingService.getWordsForChannel(channel)).thenReturn(responseMessage);
+
+    // Act
+    wordHandler.handleCommand(adminMessage);
+
+    // Assert
+    verify(inputValidator).isValidWordsInput(inputText);
+    verify(wordProcessingService).getWordsForChannel(channel);
+    verify(telegramResponseService).sendResponse(adminMessage, responseMessage);
+  }
+
+  @Test
+  void handleCommand_InvalidInput_ErrorResponse() {
     // Arrange
     String inputText = "invalid input text";
     AdminsChannels channel = AdminsChannels.ENGLISH;
     AdminMessage adminMessage = createMessage(inputText, channel);
-    String errorMessage = "Invalid input! The input should start with '/add'. " +
-        "Use words separated by ';'. Each word can contain letters, numbers, or underscores.";
+    String errorMessage = "Invalid input! Use '/add' to add words or '/show' to view the list of words. " +
+        "For '/add', use words separated by ';'. Each word can contain letters, numbers, or underscores.";
 
     when(inputValidator.isValidWordsInput(inputText)).thenReturn(false);
 
     // Act
-    wordHandler.handleAddWordsCommand(adminMessage);
+    wordHandler.handleCommand(adminMessage);
 
     // Assert
     verify(inputValidator).isValidWordsInput(inputText);

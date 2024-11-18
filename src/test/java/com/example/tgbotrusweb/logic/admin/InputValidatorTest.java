@@ -2,13 +2,11 @@ package com.example.tgbotrusweb.logic.admin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@Disabled
 public class InputValidatorTest {
 
   @Autowired
@@ -121,5 +119,23 @@ public class InputValidatorTest {
     Boolean result = inputValidator.isValidWordsInput(input);
 
     assertEquals(false, result);
+  }
+
+  @Test
+  void isValidWordsInput12() {
+    String input = "/add";
+
+    Boolean result = inputValidator.isValidWordsInput(input);
+
+    assertEquals(false, result);
+  }
+
+  @Test
+  void isValidWordsInput13() {
+    String input = "/show";
+
+    Boolean result = inputValidator.isValidWordsInput(input);
+
+    assertEquals(true, result);
   }
 }

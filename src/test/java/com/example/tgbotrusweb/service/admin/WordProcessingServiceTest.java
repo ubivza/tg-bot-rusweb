@@ -7,9 +7,9 @@ import static org.mockito.Mockito.when;
 
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.repository.WordFileRepository;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 class WordProcessingServiceTest {
 
   @Mock
@@ -66,5 +65,37 @@ class WordProcessingServiceTest {
 
     // Assert
     assertEquals("Error saving words: Simulated error", result);
+  }
+
+  @Test
+  void getWordsForChannel_Success() {
+    // Arrange
+    AdminsChannels channel = AdminsChannels.ENGLISH;
+
+    Set<String> existingWords = Set.of("banana", "grape");
+
+    when(wordFileRepository.readWordsFromFile(anyString())).thenReturn(existingWords);
+
+    // Act
+    String result = wordProcessingService.getWordsForChannel(channel);
+
+    // Assert
+    assertEquals("Words list: " + String.join(", ", existingWords), result);
+  }
+
+  @Test
+  void getWordsForChannel_EmptySet() {
+    // Arrange
+    AdminsChannels channel = AdminsChannels.ENGLISH;
+
+    Set<String> existingWords = Collections.emptySet();
+
+    when(wordFileRepository.readWordsFromFile(anyString())).thenReturn(existingWords);
+
+    // Act
+    String result = wordProcessingService.getWordsForChannel(channel);
+
+    // Assert
+    assertEquals("No words have been added yet.", result);
   }
 }

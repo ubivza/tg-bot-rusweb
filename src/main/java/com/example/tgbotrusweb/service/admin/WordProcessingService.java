@@ -30,6 +30,20 @@ public class WordProcessingService {
     return wordFileRepository.saveNewWords(fileName, newWords, duplicateWords);
   }
 
+  public String getWordsForChannel(AdminsChannels channel) {
+    String fileName = resolveFileName(channel);
+
+    Set<String> existingWords = wordFileRepository.readWordsFromFile(fileName);
+    String responseMessage;
+    if (existingWords.isEmpty()) {
+      responseMessage = "No words have been added yet.";
+    } else {
+      responseMessage = "Words list: " + String.join(", ", existingWords);
+    }
+    log.info(responseMessage);
+    return responseMessage;
+  }
+
   private Set<String> parseWords(String input) {
     if (input.startsWith("/add ")) {
       input = input.substring(5);

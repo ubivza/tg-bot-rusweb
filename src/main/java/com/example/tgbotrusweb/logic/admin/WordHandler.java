@@ -20,26 +20,48 @@ public class WordHandler {
   private final InputValidator inputValidator;
   private final UniqueChannelWordsHandler uniqueChannelWordsHandler;
   private final GeneralWordsHandler generalWordsHandler;
+  private static final String ERROR_MESSAGE = "Invalid input! Use '/add' to add words or '/show' to view the list of words. " +
+      "For '/add', use words separated by ';'. Each word can contain letters, numbers, or underscores.";
+
+
+  public void handleCommand(AdminMessage adminMessage) {
+    String inputText = adminMessage.getUpdate().getMessage().getText();
+    AdminsChannels channel = adminMessage.getChannel();
+
+    if (!inputValidator.isValidWordsInput(inputText)) {
+      telegramResponseService.sendResponse(adminMessage, ERROR_MESSAGE);
+      log.info(ERROR_MESSAGE);
+      return;
+    }
+    if (inputText.startsWith("/add")) {
+      handleAddWordsCommand(adminMessage, inputText, channel);
+    } else if (inputText.startsWith("/show")) {
+      handleShowWordsCommand(adminMessage, channel);
+    } else {
+      telegramResponseService.sendResponse(adminMessage, ERROR_MESSAGE);
+      log.info(ERROR_MESSAGE);
+    }
+  }
 
   /**
    * Обрабатывает команду добавления слов.
    *
    * @param adminMessage Сообщение от пользователя.
    */
-  public void handleAddWordsCommand(AdminMessage adminMessage) {
-    String inputText = adminMessage.getUpdate().getMessage().getText();
-    AdminsChannels channel = adminMessage.getChannel();
-
-    if (!inputValidator.isValidWordsInput(inputText)) {
-      String errorMessage = "Invalid input! The input should start with '/add'. " +
-          "Use words separated by ';'. Each word can contain letters, numbers, or underscores.";
-      telegramResponseService.sendResponse(adminMessage, errorMessage);
-      log.info(errorMessage);
-      return;
-    }
-
+  private void handleAddWordsCommand(AdminMessage adminMessage, String inputText, AdminsChannels channel) {
     String responseMessage = wordProcessingService.processAndSaveWords(inputText, channel);
     updateActualWordList(channel);
+    telegramResponseService.sendResponse(adminMessage, responseMessage);
+  }
+
+  /**
+   * Обрабатывает команду отображения списка слов.
+   *
+   * @param adminMessage Сообщение от пользователя.
+   */
+  public void handleShowWordsCommand(AdminMessage adminMessage, AdminsChannels channel) {
+    String responseMessage = wordProcessingService.getWordsForChannel(channel);
+
     telegramResponseService.sendResponse(adminMessage, responseMessage);
   }
 
