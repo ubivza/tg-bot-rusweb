@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -29,6 +31,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private final ReplyHandler replyHandler;
   private final WordHandler wordHandler;
   private static final Executor executor = Executors.newFixedThreadPool(50);
+  private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
   public TelegramBotGateway(ReplyHandler replyHandler, WordHandler wordHandler) {
     this.replyHandler = replyHandler;
@@ -81,6 +84,9 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
     log.info("Registered bot running state is: " + botSession.isRunning());
     log.info("Available processors: " + Runtime.getRuntime().availableProcessors());
     log.info("Total memory: " + Runtime.getRuntime().totalMemory());
+    log.info("Scheduler is set");
+    service.scheduleAtFixedRate(() -> replyHandler.sendStatsToAdmin(telegramClient), 23, 24, TimeUnit.HOURS);
+    service.scheduleAtFixedRate(replyHandler::refreshCommentsCount, 2, 24, TimeUnit.HOURS);
   }
 
   private Channels getChannel(Update update) {
