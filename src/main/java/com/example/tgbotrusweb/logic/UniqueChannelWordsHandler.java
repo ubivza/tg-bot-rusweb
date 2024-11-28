@@ -1,13 +1,10 @@
 package com.example.tgbotrusweb.logic;
 
-import static com.example.tgbotrusweb.utils.FileDataDownloader.*;
-
 import com.example.tgbotrusweb.logic.domain.Comment;
-import com.example.tgbotrusweb.logic.enums.Channels;
 import com.example.tgbotrusweb.logic.interfaces.Handler;
+import com.example.tgbotrusweb.logic.repository.WordFileRepository;
 import com.example.tgbotrusweb.service.CommentRemover;
-import jakarta.annotation.PostConstruct;
-import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,53 +12,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class UniqueChannelWordsHandler extends Handler {
+
+  private final WordFileRepository repository;
   private final CommentRemover commentRemover;
-  private static List<String> germanWords;
-  private static List<String> englishWords;
-  private static List<String> italianWords;
-  private static List<String> frenchWords;
-  private static List<String> spanishWords;
   private static final String REGEX_INVISIBLE_SYMBOL = "\u2063";
 
   @Override
   public void handleUpdate(Comment comment) {
-    Channels channel = comment.getChannel();
-    log.info(channel + "");
-    switch (channel) {
-      case GERMAN -> checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
-      case ENGLISH -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
-      case ITALY -> checkIfCommentContainsUniqueWord(italianWords, comment, channel.name());
-      case FRENCH -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
-      case SPANISH -> checkIfCommentContainsUniqueWord(spanishWords, comment, channel.name());
-    }
+    Set<String> wordSet = repository.getWordSet(comment.getChatId());
+    checkIfCommentContainsUniqueWord(wordSet, comment);
   }
 
-  public void updateEnglishWords() {
-    log.info("English words updated in memory");
-    englishWords = readFromEnglishFile();
-  }
-
-  public void updateGermanWords() {
-    log.info("German words updated in memory");
-    germanWords = readFromGermanFile();
-  }
-
-  public void updateItalianWords() {
-    log.info("Italian words updated in memory");
-    italianWords = readFromItalianFile();
-  }
-
-  public void updateFrenchWords() {
-    log.info("French words updated in memory");
-    frenchWords = readFromFrenchFile();
-  }
-
-  private void checkIfCommentContainsUniqueWord(List<String> words, Comment comment, String language) {
+  private void checkIfCommentContainsUniqueWord(Set<String> words, Comment comment) {
     for (String s : words) {
       if (!s.isBlank()) {
         String commentTextLowerCase = getCommentTextWithoutInvisibleSeparator(comment);
         if (Pattern.compile(s.toLowerCase()).matcher(commentTextLowerCase).find()) {
-          log.info("r " + language + " word: " + s);
+          //log.info("r " + language + " word: " + s); TODO
           commentRemover.handle(comment);
           break;
         }
@@ -73,18 +40,4 @@ public class UniqueChannelWordsHandler extends Handler {
     return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOL, "");
   }
 
-  @PostConstruct
-  private void updateWords() {
-    log.info("Unique words updated in memory");
-    germanWords = readFromGermanFile();
-    englishWords = readFromEnglishFile();
-    italianWords = readFromItalianFile();
-    frenchWords = readFromFrenchFile();
-    spanishWords = readFromSpanishFile();
-  }
-
-  public void updateSpanishWords() {
-    log.info("Spanish words updated in memory");
-    spanishWords = readFromSpanishFile();
-  }
 }

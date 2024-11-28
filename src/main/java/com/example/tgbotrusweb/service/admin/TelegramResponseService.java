@@ -12,9 +12,9 @@ public class TelegramResponseService {
 
   public void sendResponse(AdminMessage adminMessage, String response) {
     SendMessage sendMessage = new SendMessage(
-        adminMessage.getUpdate().getMessage().getChatId().toString(), response
+        adminMessage.getChatId().toString(), response
     );
-    sendMessage.setMessageThreadId(adminMessage.getUpdate().getMessage().getMessageThreadId());
+    sendMessage.setMessageThreadId(adminMessage.getMessageThreadId());
 
     try {
       adminMessage.getClient().execute(sendMessage);

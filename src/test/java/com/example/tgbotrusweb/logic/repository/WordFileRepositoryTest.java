@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
+import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +56,7 @@ class WordFileRepositoryTest {
       Set<String> newWords = Set.of("word3");
       Set<String> duplicateWords = Set.of("word1");
 
-      String result = wordFileRepository.saveNewWords("testFile.txt", newWords, duplicateWords);
+      String result = wordFileRepository.saveNewWords(AdminsChannels.ENGLISH.getId(), newWords, duplicateWords);
 
       assertEquals("New words \"word3\" successfully added to file. These words already exist: word1", result);
     }
@@ -66,7 +67,7 @@ class WordFileRepositoryTest {
     Set<String> newWords = Set.of();
     Set<String> duplicateWords = Set.of("word1", "word2");
 
-    String result = wordFileRepository.saveNewWords("fileName.txt", newWords, duplicateWords);
+    String result = wordFileRepository.saveNewWords(44, newWords, duplicateWords);
 
     assertTrue(result.startsWith("No new words to add."), "Expected message to start with 'No new words to add.'");
     assertTrue(result.contains("word1"), "Expected message to contain 'word1'");

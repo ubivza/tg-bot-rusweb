@@ -4,6 +4,7 @@ import com.example.tgbotrusweb.logic.GeneralWordsHandler;
 import com.example.tgbotrusweb.logic.LinksHandler;
 import com.example.tgbotrusweb.logic.ReplyHandler;
 import com.example.tgbotrusweb.logic.UniqueChannelWordsHandler;
+import com.example.tgbotrusweb.logic.repository.WordFileRepository;
 import com.example.tgbotrusweb.service.CommentRemover;
 import com.example.tgbotrusweb.service.RulesCommentWriter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ public class Config {
   private final CommentRemover commentRemover;
 
   private final RulesCommentWriter commentWriter;
+
+  private final WordFileRepository wordFileRepository;//todo разобраться
 
   @Bean
   public ReplyHandler replyHandler() {
@@ -34,13 +37,13 @@ public class Config {
 
   @Bean
   public GeneralWordsHandler generalWordsHandler() {
-    GeneralWordsHandler generalWordsHandler = new GeneralWordsHandler(commentRemover);
+    GeneralWordsHandler generalWordsHandler = new GeneralWordsHandler(wordFileRepository, commentRemover);
     generalWordsHandler.setNext(uniqueChannelWordsHandler());
     return generalWordsHandler;
   }
 
   @Bean
   public UniqueChannelWordsHandler uniqueChannelWordsHandler() {
-    return new UniqueChannelWordsHandler(commentRemover);
+    return new UniqueChannelWordsHandler(wordFileRepository, commentRemover);
   }
 }

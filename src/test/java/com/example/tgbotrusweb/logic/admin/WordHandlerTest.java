@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @ExtendWith(MockitoExtension.class)
 class WordHandlerTest {
@@ -41,18 +40,18 @@ class WordHandlerTest {
     // Arrange
     String inputText = "/add word1;word2;word3";
     AdminsChannels channel = AdminsChannels.ENGLISH;
-    AdminMessage adminMessage = createMessage(inputText, channel);
+    AdminMessage adminMessage = createMessage(inputText, channel.getId());
     String responseMessage = "Words added successfully";
 
     when(inputValidator.isValidWordsInput(inputText)).thenReturn(true);
-    when(wordProcessingService.processAndSaveWords(inputText, channel)).thenReturn(responseMessage);
+    when(wordProcessingService.processAndSaveWords(inputText, channel.getId())).thenReturn(responseMessage);
 
     // Act
     wordHandler.handleCommand(adminMessage);
 
     // Assert
     verify(inputValidator).isValidWordsInput(inputText);
-    verify(wordProcessingService).processAndSaveWords(inputText, channel);
+    verify(wordProcessingService).processAndSaveWords(inputText, channel.getId());
     verify(telegramResponseService).sendResponse(adminMessage, responseMessage);
   }
 
@@ -61,18 +60,18 @@ class WordHandlerTest {
     // Arrange
     String inputText = "/show";
     AdminsChannels channel = AdminsChannels.ENGLISH;
-    AdminMessage adminMessage = createMessage(inputText, channel);
+    AdminMessage adminMessage = createMessage(inputText, channel.getId());
     String responseMessage = "No words have been added yet.";
 
     when(inputValidator.isValidWordsInput(inputText)).thenReturn(true);
-    when(wordProcessingService.getWordsForChannel(channel)).thenReturn(responseMessage);
+    when(wordProcessingService.getWordsForChannel(channel.getId())).thenReturn(responseMessage);
 
     // Act
     wordHandler.handleCommand(adminMessage);
 
     // Assert
     verify(inputValidator).isValidWordsInput(inputText);
-    verify(wordProcessingService).getWordsForChannel(channel);
+    verify(wordProcessingService).getWordsForChannel(channel.getId());
     verify(telegramResponseService).sendResponse(adminMessage, responseMessage);
   }
 
@@ -81,7 +80,7 @@ class WordHandlerTest {
     // Arrange
     String inputText = "invalid input text";
     AdminsChannels channel = AdminsChannels.ENGLISH;
-    AdminMessage adminMessage = createMessage(inputText, channel);
+    AdminMessage adminMessage = createMessage(inputText, channel.getId());
     String errorMessage = "Invalid input! Use '/add' to add words or '/show' to view the list of words. " +
         "For '/add', use words separated by ';'. Each word can contain letters, numbers, or underscores.";
 
@@ -96,12 +95,7 @@ class WordHandlerTest {
     verify(wordProcessingService, never()).processAndSaveWords(anyString(), any());
   }
 
-  private AdminMessage createMessage(String text, AdminsChannels channel) {
-    var ms = new org.telegram.telegrambots.meta.api.objects.message.Message();
-    ms.setText(text);
-    var update = new Update();
-    update.setMessage(ms);
-
-    return AdminMessage.builder().update(update).channel(channel).build();
+  private AdminMessage createMessage(String text, Integer messageThreadId) {
+    return AdminMessage.builder().inputText(text).messageThreadId(messageThreadId).build();
   }
 }

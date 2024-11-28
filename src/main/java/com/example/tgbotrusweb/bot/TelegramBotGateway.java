@@ -4,11 +4,9 @@ import com.example.tgbotrusweb.logic.ReplyHandler;
 import com.example.tgbotrusweb.logic.admin.WordHandler;
 import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
-import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,7 +19,6 @@ import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsume
 import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
-import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -59,13 +56,14 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
         replyHandler.handleUpdate(Comment.builder()
             .update(update)
             .client(telegramClient)
-            .channel(getChannel(update))
+            .chatId(update.getMessage().getChatId())
             .build());
       } else if (isUpdateFromOurAdminsChannel(update)) {
         wordHandler.handleCommand(AdminMessage.builder()
-            .update(update)
+            .messageThreadId(update.getMessage().getMessageThreadId())
+            .chatId(update.getMessage().getChatId())
+            .inputText(update.getMessage().getText())
             .client(telegramClient)
-            .channel(getAdminsChannel(update))
             .build());
       }
     }
@@ -93,45 +91,11 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
     log.info("init delay: " + initialDelay);
   }
 
-  private Channels getChannel(Update update) {
-    if (Objects.equals(update.getMessage().getChatId(), Channels.TEST.getId())) {
-      return Channels.TEST;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.ITALY.getId())) {
-      return Channels.ITALY;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.GERMAN.getId())) {
-      return Channels.GERMAN;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.FRENCH.getId())) {
-      return Channels.FRENCH;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.ENGLISH.getId())) {
-      return Channels.ENGLISH;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.SPANISH.getId())) {
-      return Channels.SPANISH;
-    } else {
-      throw new RuntimeException("Chat id is not valid");
-    }
-  }
 
   private boolean isUpdateFromOurChannel(Update update) {
     return Arrays.stream(Channels.values()).filter(x -> x != Channels.ADMIN).map(Channels::getId).toList().contains(update.getMessage().getChatId());
   }
 
-  private AdminsChannels getAdminsChannel(Update update) {
-    if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ITALY.getId())) {
-      return AdminsChannels.ITALY;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GERMAN.getId())) {
-      return AdminsChannels.GERMAN;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.FRENCH.getId())) {
-      return AdminsChannels.FRENCH;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ENGLISH.getId())) {
-      return AdminsChannels.ENGLISH;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GENERAL.getId())) {
-      return AdminsChannels.GENERAL;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.SPANISH.getId())) {
-      return AdminsChannels.SPANISH;
-    } else {
-      throw new RuntimeException("Message thread id is not valid");
-    }
-  }
 
   private boolean isUpdateFromOurAdminsChannel(Update update) {
     return update.getMessage().getChatId().equals(Channels.ADMIN.getId());

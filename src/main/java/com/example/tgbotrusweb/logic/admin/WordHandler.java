@@ -1,9 +1,7 @@
 package com.example.tgbotrusweb.logic.admin;
 
 import com.example.tgbotrusweb.logic.GeneralWordsHandler;
-import com.example.tgbotrusweb.logic.UniqueChannelWordsHandler;
 import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
-import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.service.admin.TelegramResponseService;
 import com.example.tgbotrusweb.service.admin.WordProcessingService;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +16,14 @@ public class WordHandler {
   private final WordProcessingService wordProcessingService;
   private final TelegramResponseService telegramResponseService;
   private final InputValidator inputValidator;
-  private final UniqueChannelWordsHandler uniqueChannelWordsHandler;
   private final GeneralWordsHandler generalWordsHandler;
   private static final String ERROR_MESSAGE = "Invalid input! Use '/add' to add words or '/show' to view the list of words. " +
       "For '/add', use words separated by ';'. Each word can contain letters, numbers, or underscores.";
 
 
   public void handleCommand(AdminMessage adminMessage) {
-    String inputText = adminMessage.getUpdate().getMessage().getText();
-    AdminsChannels channel = adminMessage.getChannel();
+    String inputText = adminMessage.getInputText();
+    Integer messageThreadId = adminMessage.getMessageThreadId();
 
     if (!inputValidator.isValidWordsInput(inputText)) {
       telegramResponseService.sendResponse(adminMessage, ERROR_MESSAGE);
@@ -34,12 +31,9 @@ public class WordHandler {
       return;
     }
     if (inputText.startsWith("/add")) {
-      handleAddWordsCommand(adminMessage, inputText, channel);
+      handleAddWordsCommand(adminMessage, inputText, messageThreadId);
     } else if (inputText.startsWith("/show")) {
-      handleShowWordsCommand(adminMessage, channel);
-    } else {
-      telegramResponseService.sendResponse(adminMessage, ERROR_MESSAGE);
-      log.info(ERROR_MESSAGE);
+      handleShowWordsCommand(adminMessage, messageThreadId);
     }
   }
 
@@ -48,9 +42,8 @@ public class WordHandler {
    *
    * @param adminMessage Сообщение от пользователя.
    */
-  private void handleAddWordsCommand(AdminMessage adminMessage, String inputText, AdminsChannels channel) {
-    String responseMessage = wordProcessingService.processAndSaveWords(inputText, channel);
-    updateActualWordList(channel);
+  private void handleAddWordsCommand(AdminMessage adminMessage, String inputText, Integer messageThreadId) {
+    String responseMessage = wordProcessingService.processAndSaveWords(inputText, messageThreadId);
     telegramResponseService.sendResponse(adminMessage, responseMessage);
   }
 
@@ -59,20 +52,10 @@ public class WordHandler {
    *
    * @param adminMessage Сообщение от пользователя.
    */
-  public void handleShowWordsCommand(AdminMessage adminMessage, AdminsChannels channel) {
-    String responseMessage = wordProcessingService.getWordsForChannel(channel);
+  public void handleShowWordsCommand(AdminMessage adminMessage, Integer messageThreadId) {
+    String responseMessage = wordProcessingService.getWordsForChannel(messageThreadId);
 
     telegramResponseService.sendResponse(adminMessage, responseMessage);
   }
 
-  private void updateActualWordList(AdminsChannels channels) {
-    switch (channels) {
-      case ENGLISH -> uniqueChannelWordsHandler.updateEnglishWords();
-      case FRENCH -> uniqueChannelWordsHandler.updateFrenchWords();
-      case ITALY -> uniqueChannelWordsHandler.updateItalianWords();
-      case GERMAN -> uniqueChannelWordsHandler.updateGermanWords();
-      case GENERAL -> generalWordsHandler.updateWords();
-      case SPANISH -> uniqueChannelWordsHandler.updateSpanishWords();
-    }
-  }
 }

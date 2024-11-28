@@ -21,7 +21,7 @@ public class CommentRemover {
         + System.lineSeparator() + comment.getUpdate().getMessage().getText()
         + System.lineSeparator() + "Comment written by: @" + userName
         + System.lineSeparator() + "Id: " + id
-        + System.lineSeparator() + "In channel: " + comment.getChannel().name();
+        + System.lineSeparator() + "In channel: " +  Channels.getById(comment.getChatId());
     SendMessage sendMessageRequest = new SendMessage(String.valueOf(Channels.ADMIN.getId()), message);
     try {
       comment.getClient().execute(sendMessageRequest);
@@ -29,7 +29,7 @@ public class CommentRemover {
       throw new RuntimeException(e);
     }
 
-    String chatId = String.valueOf(comment.getChannel().getId());
+    String chatId = String.valueOf(comment.getChatId());
     DeleteMessage deleteMessageRequest = new DeleteMessage(chatId,
         comment.getUpdate().getMessage().getMessageId());
     try {
