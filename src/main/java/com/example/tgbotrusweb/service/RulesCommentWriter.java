@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Component
 @Slf4j
 public class RulesCommentWriter {
-  private static final String rulesMessage = "⚠️Liebe Freunde unseres Kanals,\n"
+  private static final String germanRulesMessage = "⚠️Liebe Freunde unseres Kanals,\n"
       + "\n"
       + "Um sicherzustellen, dass der Dialog im Chat für alle Teilnehmer möglichst konstruktiv und sinnbringend verläuft, bitten wir um die Beachtung und Berücksichtigung folgender Regeln:\n"
       + "\n"
@@ -26,21 +26,22 @@ public class RulesCommentWriter {
   private static final String statisticsMessageEnd = " comments in total";
 
   public void writeRulesInComments(Comment comment) {
-    SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), rulesMessage);
-    sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
-    MessageEntity boldText = new MessageEntity("bold", rulesMessage.indexOf("Liebe"), rulesMessage.indexOf("sperren.") + 6);
-    sendRulesMessage.setEntities(List.of(boldText));
-    try {
-      comment.getClient().execute(sendRulesMessage);
-    } catch (TelegramApiException e) {
-      throw new RuntimeException(e);
+    if (comment.getChannel() == Channels.GERMAN) {
+      SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), germanRulesMessage);
+      sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
+      MessageEntity boldText = new MessageEntity("bold", germanRulesMessage.indexOf("Liebe"), germanRulesMessage.indexOf("sperren.") + 6);
+      sendRulesMessage.setEntities(List.of(boldText));
+      try {
+        comment.getClient().execute(sendRulesMessage);
+      } catch (TelegramApiException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
   public void sendStatsToAdmin(int counter, TelegramClient client) {
     log.info("Scheduled work started");
     SendMessage sendRulesMessage = new SendMessage(String.valueOf(Channels.ADMIN.getId()), statisticsMessageStart + counter + statisticsMessageEnd);
-    sendRulesMessage.setMessageThreadId(AdminsChannels.GENERAL.getId());
     try {
       client.execute(sendRulesMessage);
     } catch (TelegramApiException e) {

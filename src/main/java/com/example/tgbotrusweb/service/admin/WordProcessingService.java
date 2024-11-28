@@ -3,8 +3,10 @@ package com.example.tgbotrusweb.service.admin;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.repository.WordFileRepository;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,14 +35,14 @@ public class WordProcessingService {
   public String getWordsForChannel(AdminsChannels channel) {
     String fileName = resolveFileName(channel);
 
-    Set<String> existingWords = wordFileRepository.readWordsFromFile(fileName);
+    TreeSet<String> existingWords = new TreeSet<>();
+    existingWords.addAll(wordFileRepository.readWordsFromFile(fileName));
     String responseMessage;
     if (existingWords.isEmpty()) {
       responseMessage = "No words have been added yet.";
     } else {
-      responseMessage = "Words list: " + String.join(", ", existingWords);
+      responseMessage = "Words list: "+ System.lineSeparator() + String.join(System.lineSeparator(), existingWords);
     }
-    log.info(responseMessage);
     return responseMessage;
   }
 
@@ -60,6 +62,7 @@ public class WordProcessingService {
       case FRENCH -> "src/main/resources/words/french_words";
       case GERMAN -> "src/main/resources/words/german_words";
       case ENGLISH -> "src/main/resources/words/english_words";
+      case SPANISH -> "src/main/resources/words/spanish_words";
       case GENERAL -> "src/main/resources/words/general_words";
     };
   }

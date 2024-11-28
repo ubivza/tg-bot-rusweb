@@ -23,7 +23,7 @@ public class GeneralWordsHandler extends Handler {
     for (String s : generalWords) {
       if (!s.isBlank()) {
         String commentTextLowerCase = getCommentTextWithoutInvisibleSeparator(comment);
-        if (Pattern.compile("\\b" + s.toLowerCase().trim() + "\\b").matcher(commentTextLowerCase).find()) {
+        if (Pattern.compile(s.toLowerCase().trim()).matcher(commentTextLowerCase).find()) {
           log.info("Comment contains link and general word: " + s);
           isCommentNotBanned = false;
           commentRemover.handle(comment);

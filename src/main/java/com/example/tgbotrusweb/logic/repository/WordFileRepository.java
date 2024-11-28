@@ -17,6 +17,7 @@ public class WordFileRepository {
   public Set<String> readWordsFromFile(String fileName) {
     try (var lines = Files.lines(Paths.get(fileName))) {
       return lines.map(String::trim)
+          .map(String::toLowerCase)
           .filter(line -> !line.isEmpty())
           .collect(Collectors.toSet());
     } catch (IOException e) {
@@ -32,19 +33,6 @@ public class WordFileRepository {
     }
 
     return save(fileName, newWords, duplicateWords);
-
-    /*try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
-      for (String word : newWords) {
-        writer.write(word);
-        writer.newLine();
-      }
-      log.info("New words added: {}", String.join(", ", newWords));
-      return "New words \"" + String.join(", ", newWords) + "\" successfully added to file. " +
-          (duplicateWords.isEmpty() ? "" : "These words already exist: " + String.join(", ", duplicateWords));
-    } catch (IOException e) {
-      log.error("File write error: {}", e.getMessage());
-      return "Error saving words: " + e.getMessage();
-    }*/
   }
 
   private static String save(String fileName, Set<String> newWords, Set<String> duplicateWords) {

@@ -35,6 +35,10 @@ public class FileDataDownloader {
     return readFromFile("french_words");
   }
 
+  public static List<String> readFromSpanishFile() {
+    return readFromFile("spanish_words");
+  }
+
   public static List<String> readFromEnglishFile() {
     return readFromFile("english_words");
   }

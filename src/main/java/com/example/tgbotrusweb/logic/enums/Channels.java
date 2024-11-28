@@ -10,6 +10,7 @@ public enum Channels {
   GERMAN,
   ENGLISH,
   ADMIN,
+  SPANISH,
   TEST;
 
   public final Long id;

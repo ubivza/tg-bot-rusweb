@@ -20,6 +20,7 @@ public class UniqueChannelWordsHandler extends Handler {
   private static List<String> englishWords;
   private static List<String> italianWords;
   private static List<String> frenchWords;
+  private static List<String> spanishWords;
   private static final String REGEX_INVISIBLE_SYMBOL = "\u2063";
 
   @Override
@@ -31,6 +32,7 @@ public class UniqueChannelWordsHandler extends Handler {
       case ENGLISH -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
       case ITALY -> checkIfCommentContainsUniqueWord(italianWords, comment, channel.name());
       case FRENCH -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
+      case SPANISH -> checkIfCommentContainsUniqueWord(spanishWords, comment, channel.name());
     }
   }
 
@@ -58,7 +60,7 @@ public class UniqueChannelWordsHandler extends Handler {
     for (String s : words) {
       if (!s.isBlank()) {
         String commentTextLowerCase = getCommentTextWithoutInvisibleSeparator(comment);
-        if (Pattern.compile("\\b" + s.toLowerCase() + "\\b").matcher(commentTextLowerCase).find()) {
+        if (Pattern.compile(s.toLowerCase()).matcher(commentTextLowerCase).find()) {
           log.info("r " + language + " word: " + s);
           commentRemover.handle(comment);
           break;
@@ -78,5 +80,11 @@ public class UniqueChannelWordsHandler extends Handler {
     englishWords = readFromEnglishFile();
     italianWords = readFromItalianFile();
     frenchWords = readFromFrenchFile();
+    spanishWords = readFromSpanishFile();
+  }
+
+  public void updateSpanishWords() {
+    log.info("Spanish words updated in memory");
+    spanishWords = readFromSpanishFile();
   }
 }

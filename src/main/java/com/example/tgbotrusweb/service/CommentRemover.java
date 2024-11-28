@@ -17,9 +17,12 @@ public class CommentRemover {
     log.info("I'm sending message to admin group, deleting comment and banning sender");
     String userName = comment.getUpdate().getMessage().getFrom().getUserName();
     long id = comment.getUpdate().getMessage().getFrom().getId();
-    SendMessage sendMessageRequest = new SendMessage(String.valueOf(Channels.ADMIN.getId()),
-        "Comment content: " + comment.getUpdate().getMessage().getText() +
-            " ; Comment written by: @" + userName + " ; Id: " + id + " ; In channel: " + comment.getChannel().name());
+    String message = "Comment content:"
+        + System.lineSeparator() + comment.getUpdate().getMessage().getText()
+        + System.lineSeparator() + "Comment written by: @" + userName
+        + System.lineSeparator() + "Id: " + id
+        + System.lineSeparator() + "In channel: " + comment.getChannel().name();
+    SendMessage sendMessageRequest = new SendMessage(String.valueOf(Channels.ADMIN.getId()), message);
     try {
       comment.getClient().execute(sendMessageRequest);
     } catch (TelegramApiException e) {

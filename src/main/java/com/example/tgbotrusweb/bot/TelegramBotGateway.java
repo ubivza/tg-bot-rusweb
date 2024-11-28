@@ -6,6 +6,7 @@ import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -20,6 +21,7 @@ import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsume
 import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -32,6 +34,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private final WordHandler wordHandler;
   private static final Executor executor = Executors.newFixedThreadPool(50);
   private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+  private static final int initialDelay = 23 - LocalDateTime.now().getHour();
 
   public TelegramBotGateway(ReplyHandler replyHandler, WordHandler wordHandler) {
     this.replyHandler = replyHandler;
@@ -85,8 +88,9 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
     log.info("Available processors: " + Runtime.getRuntime().availableProcessors());
     log.info("Total memory: " + Runtime.getRuntime().totalMemory());
     log.info("Scheduler is set");
-    service.scheduleAtFixedRate(() -> replyHandler.sendStatsToAdmin(telegramClient), 23, 24, TimeUnit.HOURS);
-    service.scheduleAtFixedRate(replyHandler::refreshCommentsCount, 2, 24, TimeUnit.HOURS);
+    service.scheduleAtFixedRate(() -> replyHandler.sendStatsToAdmin(telegramClient), initialDelay, 24, TimeUnit.HOURS);
+    service.scheduleAtFixedRate(replyHandler::refreshCommentsCount, initialDelay, 24, TimeUnit.HOURS);
+    log.info("init delay: " + initialDelay);
   }
 
   private Channels getChannel(Update update) {
@@ -100,6 +104,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
       return Channels.FRENCH;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.ENGLISH.getId())) {
       return Channels.ENGLISH;
+    } else if (Objects.equals(update.getMessage().getChatId(), Channels.SPANISH.getId())) {
+      return Channels.SPANISH;
     } else {
       throw new RuntimeException("Chat id is not valid");
     }
@@ -120,6 +126,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
       return AdminsChannels.ENGLISH;
     } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GENERAL.getId())) {
       return AdminsChannels.GENERAL;
+    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.SPANISH.getId())) {
+      return AdminsChannels.SPANISH;
     } else {
       throw new RuntimeException("Message thread id is not valid");
     }
