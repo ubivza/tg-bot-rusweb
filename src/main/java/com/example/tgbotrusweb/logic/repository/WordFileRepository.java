@@ -106,7 +106,7 @@ public class WordFileRepository {
 
   private String resolveFileNameWithChatId(Long id) {
     return switch (Channels.getById(id)) {
-      case ITALY -> "italy_words";
+      case ITALY -> "italian_words";
       case GERMAN -> "german_words";
       case FRENCH -> "french_words";
       case ENGLISH -> "english_words";
@@ -117,7 +117,7 @@ public class WordFileRepository {
 
   private String resolveFileNameWithMessageThreadId(Integer id) {
     return switch (AdminsChannels.getById(id)) {
-      case ITALY -> "italy_words";
+      case ITALY -> "italian_words";
       case GERMAN -> "german_words";
       case FRENCH -> "french_words";
       case ENGLISH -> "english_words";
@@ -129,7 +129,7 @@ public class WordFileRepository {
   @PostConstruct
   private void updateWords() {
     log.info("Words updated in memory");
-    words.put("italy_words", readWordsFromFile("italy_words"));
+    words.put("italian_words", readWordsFromFile("italian_words"));
     words.put("french_words", readWordsFromFile("french_words"));
     words.put("german_words", readWordsFromFile("german_words"));
     words.put("english_words", readWordsFromFile("english_words"));
