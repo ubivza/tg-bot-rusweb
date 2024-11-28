@@ -21,7 +21,7 @@ public class WordProcessingService {
   public String processAndSaveWords(String input, Integer messageThreadId) {
     Set<String> inputWords = parseWords(input);
 
-    Set<String> existingWords = wordFileRepository.readWordsFromFile(messageThreadId);//TODO из мапп теперь читаем //TODO TREESET
+    Set<String> existingWords = wordFileRepository.readWordsFromFile(messageThreadId);//TODO из мапп теперь читаем. Её сделать паблик?
     Set<String> duplicateWords = findDuplicates(inputWords, existingWords);
     Set<String> newWords = findNewWords(inputWords, existingWords);
 

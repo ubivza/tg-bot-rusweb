@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -30,8 +31,9 @@ public class WordFileRepository {
   public Set<String> readWordsFromFile(Integer messageThreadId) {
     try (var lines = Files.lines(Paths.get(RESOURCE_PATH + resolveFileNameWithMessageThreadId(messageThreadId)))) {
       return lines.map(String::trim)
+          .map(String::toLowerCase)
           .filter(line -> !line.isEmpty())
-          .collect(Collectors.toSet());//todo toTreeSet
+          .collect(Collectors.toCollection(TreeSet::new));
     } catch (IOException e) {
       return Collections.emptySet();
     }
@@ -42,7 +44,7 @@ public class WordFileRepository {
       return lines.map(String::trim)
           .map(String::toLowerCase)
           .filter(line -> !line.isEmpty())
-          .collect(Collectors.toSet());//todo toTreeSet
+          .collect(Collectors.toCollection(TreeSet::new));
     } catch (IOException e) {
       return Collections.emptySet();
     }
