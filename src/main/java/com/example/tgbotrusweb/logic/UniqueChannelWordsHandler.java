@@ -30,7 +30,7 @@ public class UniqueChannelWordsHandler extends Handler {
     switch (channel) {
       case GERMAN -> checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
       case ENGLISH -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
-      case ITALY -> checkIfCommentContainsUniqueWord(italianWords, comment, channel.name());
+      case ITALIAN -> checkIfCommentContainsUniqueWord(italianWords, comment, channel.name());
       case FRENCH -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
       case SPANISH -> checkIfCommentContainsUniqueWord(spanishWords, comment, channel.name());
     }

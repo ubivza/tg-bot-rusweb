@@ -21,7 +21,6 @@ import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsume
 import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
-import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -96,8 +95,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private Channels getChannel(Update update) {
     if (Objects.equals(update.getMessage().getChatId(), Channels.TEST.getId())) {
       return Channels.TEST;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.ITALY.getId())) {
-      return Channels.ITALY;
+    } else if (Objects.equals(update.getMessage().getChatId(), Channels.ITALIAN.getId())) {
+      return Channels.ITALIAN;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.GERMAN.getId())) {
       return Channels.GERMAN;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.FRENCH.getId())) {
