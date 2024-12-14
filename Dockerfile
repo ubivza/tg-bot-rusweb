@@ -7,4 +7,5 @@ COPY /src/main/resources/words/french_words /app/src/main/resources/words/french
 COPY /src/main/resources/words/general_words /app/src/main/resources/words/general_words
 COPY /src/main/resources/words/german_words /app/src/main/resources/words/german_words
 COPY /src/main/resources/words/italian_words /app/src/main/resources/words/italian_words
+COPY /src/main/resources/words/spanish_words /app/src/main/resources/words/spanish_words
 ENTRYPOINT ["java","-jar","/app/com.jar"]
