@@ -43,8 +43,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
 
   @Override
   public String getBotToken() {
-    return "6506450289:AAGd-Z7XXU8WjhtNZjfCTagkr5ljoATyTsk";
-  }
+    return "7945101745:AAEqibTBhe355A7G2fY3uDE5OIp4yPUfGb8";
+  } //7945101745:AAEqibTBhe355A7G2fY3uDE5OIp4yPUfGb8
 
   @Override
   public LongPollingUpdateConsumer getUpdatesConsumer() {

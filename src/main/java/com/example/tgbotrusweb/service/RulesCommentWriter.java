@@ -31,7 +31,7 @@ public class RulesCommentWriter {
       📍 En caso de incumplimiento de estas normas la redacción se reserva el derecho de bloquear a los infractores.
       """;
 
-  private static String italianRulesMessage = """
+  private static final String italianRulesMessage = """
       ⚠️Cari amici del nostro canale,
             
       Per garantire che il dialogo in chat sia il più costruttivo possibile per tutti, vi chiediamo di rispettare le seguenti regole:
@@ -40,7 +40,15 @@ public class RulesCommentWriter {
             
       📍Per il mancato rispetto di queste regole, la redazione si riserva il diritto di bloccare i trasgressori.
       """;
-
+  private static final String frenchRulesMessage = """
+          ⚠️ Chers amis de notre canal,
+            
+          Afin de rendre le dialogue dans le salon de discussion aussi constructif et intéressant que possible pour tous les participants, nous vous demandons d'observer et de prendre en compte les règles suivantes :
+            
+          https://t.me/infodefenseFRreserve/10186
+            
+          📍 En raison de la situation actuelle, nous considérons que le respect des règles est obligatoire pour chaque utilisateur, sinon la rédaction se réserve le droit de les bloquer.
+      """;
   private static final String statisticsMessageStart = "Today was parsed: ";
   private static final String statisticsMessageEnd = " comments in total";
 
@@ -73,6 +81,18 @@ public class RulesCommentWriter {
       SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), italianRulesMessage);
       sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
       MessageEntity boldText = new MessageEntity("bold", italianRulesMessage.indexOf("Cari"), italianRulesMessage.lastIndexOf("."));
+      sendRulesMessage.setEntities(List.of(boldText));
+      try {
+        comment.getClient().execute(sendRulesMessage);
+      } catch (TelegramApiException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    if (comment.getChannel() == Channels.FRENCH) {
+      SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), frenchRulesMessage);
+      sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
+      MessageEntity boldText = new MessageEntity("bold", frenchRulesMessage.indexOf("Chers"), frenchRulesMessage.indexOf("bloquer") + 6);
       sendRulesMessage.setEntities(List.of(boldText));
       try {
         comment.getClient().execute(sendRulesMessage);

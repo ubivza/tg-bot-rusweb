@@ -148,4 +148,22 @@ public class InputValidatorTest {
     assertEquals(true, result);
   }
 
+  @Test
+  void isValidWordsInput15() {
+    String input = "/add plateforme d’investissement";
+
+    Boolean result = inputValidator.isValidWordsInput(input);
+
+    assertEquals(true, result);
+  }
+
+  @Test
+  void isValidWordsInput16() {
+    String input = "/add plateforme d-investissement";
+
+    Boolean result = inputValidator.isValidWordsInput(input);
+
+    assertEquals(true, result);
+  }
+
 }
