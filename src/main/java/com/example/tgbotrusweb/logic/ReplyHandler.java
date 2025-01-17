@@ -20,7 +20,7 @@ public class ReplyHandler extends Handler {
   public void handleUpdate(Comment comment) {
     if (isSenderChannel(comment)) {
       if (isPreviousMessageNotTheSameMediaGroupId(comment)) {
-        log.info("Writing rules under post");
+        log.info("Writing rules under post in " + comment.getChannel());
         previousMediaGroupId = comment.getUpdate().getMessage().getMediaGroupId();
         commentWriter.writeRulesInComments(comment);
       }

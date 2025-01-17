@@ -3,6 +3,7 @@ package com.example.tgbotrusweb.service;
 import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.util.List;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -49,56 +50,80 @@ public class RulesCommentWriter {
             
           📍 En raison de la situation actuelle, nous considérons que le respect des règles est obligatoire pour chaque utilisateur, sinon la rédaction se réserve le droit de les bloquer.
       """;
+  private static final String french2RulesMessage = """
+          ⚠️ Chers amis de notre canal,
+          
+          Afin de rendre le dialogue dans le salon de discussion aussi constructif et intéressant que possible pour tous les participants, nous vous demandons d'observer et de prendre en compte les règles suivantes :
+          
+          VOICI LE LIEN (https://t.me/c/2056162680/4662) VERS LES RÈGLES COMPLÈTES
+          
+          📍 En raison de la situation actuelle, nous considérons que le respect des règles est obligatoire pour chaque utilisateur, sinon la rédaction se réserve le droit de les bloquer.
+      """;
   private static final String statisticsMessageStart = "Today was parsed: ";
   private static final String statisticsMessageEnd = " comments in total";
 
+  private void sendRulesMessage(Comment comment, String message, int startIndex, int endIndex, String entityUrl) {
+    SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), message);
+    sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
+    
+    List<MessageEntity> entities = new ArrayList<>();
+    MessageEntity boldText = new MessageEntity("bold", startIndex, endIndex);
+    entities.add(boldText);
+    
+    if (entityUrl != null) {
+      int offset = message.indexOf("LIEN");
+      int length = "LIEN".length();
+      MessageEntity linkEntity = new MessageEntity("text_link", offset, length);
+      linkEntity.setUrl(entityUrl);
+      entities.add(linkEntity);
+    }
+    
+    sendRulesMessage.setEntities(entities);
+    
+    try {
+      comment.getClient().execute(sendRulesMessage);
+    } catch (TelegramApiException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public void writeRulesInComments(Comment comment) {
-    if (comment.getChannel() == Channels.GERMAN) {
-      SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), germanRulesMessage);
-      sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
-      MessageEntity boldText = new MessageEntity("bold", germanRulesMessage.indexOf("Liebe"), germanRulesMessage.indexOf("sperren.") + 6);
-      sendRulesMessage.setEntities(List.of(boldText));
-      try {
-        comment.getClient().execute(sendRulesMessage);
-      } catch (TelegramApiException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    if (comment.getChannel() == Channels.SPANISH) {
-      SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), spanishRulesMessage);
-      sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
-      MessageEntity boldText = new MessageEntity("bold", spanishRulesMessage.indexOf("Queridos"), 33);
-      sendRulesMessage.setEntities(List.of(boldText));
-      try {
-        comment.getClient().execute(sendRulesMessage);
-      } catch (TelegramApiException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    if (comment.getChannel() == Channels.ITALIAN) {
-      SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), italianRulesMessage);
-      sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
-      MessageEntity boldText = new MessageEntity("bold", italianRulesMessage.indexOf("Cari"), italianRulesMessage.lastIndexOf("."));
-      sendRulesMessage.setEntities(List.of(boldText));
-      try {
-        comment.getClient().execute(sendRulesMessage);
-      } catch (TelegramApiException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    if (comment.getChannel() == Channels.FRENCH) {
-      SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), frenchRulesMessage);
-      sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
-      MessageEntity boldText = new MessageEntity("bold", frenchRulesMessage.indexOf("Chers"), frenchRulesMessage.indexOf("bloquer") + 6);
-      sendRulesMessage.setEntities(List.of(boldText));
-      try {
-        comment.getClient().execute(sendRulesMessage);
-      } catch (TelegramApiException e) {
-        throw new RuntimeException(e);
-      }
+    switch (comment.getChannel()) {
+      case GERMAN -> sendRulesMessage(
+        comment, 
+        germanRulesMessage, 
+        germanRulesMessage.indexOf("Liebe"), 
+        germanRulesMessage.indexOf("sperren.") + 6,
+        null
+      );
+      case SPANISH -> sendRulesMessage(
+        comment, 
+        spanishRulesMessage, 
+        spanishRulesMessage.indexOf("Queridos"), 
+        33,
+        null
+      );
+      case ITALIAN -> sendRulesMessage(
+        comment, 
+        italianRulesMessage, 
+        italianRulesMessage.indexOf("Cari"), 
+        italianRulesMessage.lastIndexOf("."),
+        null
+      );
+      case FRENCH -> sendRulesMessage(
+        comment, 
+        frenchRulesMessage, 
+        frenchRulesMessage.indexOf("Chers"), 
+        frenchRulesMessage.indexOf("bloquer."),
+        null
+      );
+      case FRENCH2 -> sendRulesMessage(
+        comment, 
+        french2RulesMessage, 
+        french2RulesMessage.indexOf("Chers"), 
+        french2RulesMessage.indexOf("bloquer."),
+        "https://t.me/c/2056162680/4662"
+      );
     }
   }
 
