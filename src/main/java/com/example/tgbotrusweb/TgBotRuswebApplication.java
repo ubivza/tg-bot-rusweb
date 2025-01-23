@@ -19,6 +19,7 @@ public class TgBotRuswebApplication {
 		String[] allBeanNames = applicationContext.getBeanDefinitionNames();
 		for(String beanName : allBeanNames) {
 			System.out.println(beanName);
+			//test git account
 		}
 	}
 
