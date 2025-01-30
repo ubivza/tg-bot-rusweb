@@ -33,7 +33,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private final WordHandler wordHandler;
   private static final Executor executor = Executors.newFixedThreadPool(50);
   private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-  private static final int initialDelay = 23 - LocalDateTime.now().getHour();
+  private static final int initialDelay = 20 - LocalDateTime.now().getHour();
 
   public TelegramBotGateway(ReplyHandler replyHandler, WordHandler wordHandler) {
     this.replyHandler = replyHandler;
