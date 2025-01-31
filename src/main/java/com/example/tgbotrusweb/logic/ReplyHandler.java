@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @RequiredArgsConstructor
 public class ReplyHandler extends Handler {
   private final RulesCommentWriter commentWriter;
-  private static final AtomicInteger commentsCounter = new AtomicInteger();
   private static final Map<Channels, AtomicInteger> commentsCounterMap = new HashMap<>();
   private static String previousMediaGroupId = "";
   private static final Long CHANNEL_ID = 777000L;
@@ -44,7 +43,7 @@ public class ReplyHandler extends Handler {
     }
 
     log.info("Got comment from " + commentChannel);
-    commentsCounter.incrementAndGet();
+
     next.handleUpdate(comment);
   }
 
@@ -60,7 +59,7 @@ public class ReplyHandler extends Handler {
   }
 
   public void refreshCommentsCount() {
-    commentsCounter.set(0);
+    commentsCounterMap.replaceAll((key, value) -> new AtomicInteger(0));
   }
 
   public void sendStatsToAdmin(TelegramClient telegramClient) {
