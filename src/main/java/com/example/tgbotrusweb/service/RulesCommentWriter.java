@@ -1,11 +1,11 @@
 package com.example.tgbotrusweb.service;
 
 import com.example.tgbotrusweb.logic.domain.Comment;
+import com.example.tgbotrusweb.logic.domain.CommentStatistics;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -130,7 +130,7 @@ public class RulesCommentWriter {
     }
   }
 
-  public void sendStatsToAdmin(Map<Channels, AtomicInteger> commentsCounterMap, TelegramClient client) {
+  public void sendStatsToAdmin(Map<Channels, CommentStatistics> commentsCounterMap, TelegramClient client) {
     log.info("Scheduled work started");
 
     if (commentsCounterMap.isEmpty()) {
@@ -140,21 +140,32 @@ public class RulesCommentWriter {
 
     StringBuilder statsMessage = new StringBuilder(statisticsMessageStart + "\n\n");
     int totalComments = 0;
+    int spamComments = 0;
 
-    for (Map.Entry<Channels, AtomicInteger> entry : commentsCounterMap.entrySet()) {
+    for (Map.Entry<Channels, CommentStatistics> entry : commentsCounterMap.entrySet()) {
       if (entry.getKey() != Channels.ADMIN && entry.getKey() != Channels.TEST) {
-        int count = entry.getValue().get();
+        int count = entry.getValue().getTotalComments().get();
         totalComments += count;
         statsMessage.append(entry.getKey().name())
             .append(": ")
             .append(count)
-            .append(" comments\n");
+            .append(" comments");
+
+        int spamCount = entry.getValue().getTotalSpamComments().get();
+        spamComments += spamCount;
+        statsMessage.append("; SPAM: ")
+            .append(spamCount)
+            .append(System.lineSeparator());
       }
     }
 
     statsMessage.append("\nTotal: ")
         .append(totalComments)
-        .append(statisticsMessageEnd);
+        .append(statisticsMessageEnd)
+        .append(System.lineSeparator())
+        .append("Spam: ")
+        .append(spamComments)
+        .append(" of them are spam");
 
     SendMessage sendStatsMessage = new SendMessage(
         String.valueOf(Channels.ADMIN.getId()),

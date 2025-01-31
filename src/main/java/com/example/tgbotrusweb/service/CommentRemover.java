@@ -1,5 +1,6 @@
 package com.example.tgbotrusweb.service;
 
+import com.example.tgbotrusweb.logic.ReplyHandler;
 import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ public class CommentRemover {
 
   public void handle(Comment comment) {
     log.info("I'm sending message to admin group, deleting comment and banning sender");
+    ReplyHandler.incrementSpamCounter(comment.getChannel());
     String userName = comment.getUpdate().getMessage().getFrom().getUserName();
     long id = comment.getUpdate().getMessage().getFrom().getId();
 
