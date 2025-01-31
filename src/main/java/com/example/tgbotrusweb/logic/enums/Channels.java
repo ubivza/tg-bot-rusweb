@@ -7,6 +7,7 @@ import lombok.Getter;
 public enum Channels {
   ITALIAN,
   FRENCH,
+  FRENCH2,
   GERMAN,
   ENGLISH,
   ADMIN,

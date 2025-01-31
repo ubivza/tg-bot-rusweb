@@ -33,7 +33,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private final WordHandler wordHandler;
   private static final Executor executor = Executors.newFixedThreadPool(50);
   private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-  private static final int initialDelay = 23 - LocalDateTime.now().getHour();
+  private static final int initialDelay = 20 - LocalDateTime.now().getHour();
 
   public TelegramBotGateway(ReplyHandler replyHandler, WordHandler wordHandler) {
     this.replyHandler = replyHandler;
@@ -101,6 +101,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
       return Channels.GERMAN;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.FRENCH.getId())) {
       return Channels.FRENCH;
+    } else if (Objects.equals(update.getMessage().getChatId(), Channels.FRENCH2.getId())) {
+      return Channels.FRENCH2;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.ENGLISH.getId())) {
       return Channels.ENGLISH;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.SPANISH.getId())) {
