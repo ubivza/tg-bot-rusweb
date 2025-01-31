@@ -2,8 +2,10 @@ package com.example.tgbotrusweb.service;
 
 import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.enums.Channels;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,6 +16,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Component
 @Slf4j
 public class RulesCommentWriter {
+
   private static final String germanRulesMessage = "⚠️Liebe Freunde unseres Kanals,\n"
       + "\n"
       + "Um sicherzustellen, dass der Dialog im Chat für alle Teilnehmer möglichst konstruktiv und sinnbringend verläuft, bitten wir um die Beachtung und Berücksichtigung folgender Regeln:\n"
@@ -65,11 +68,11 @@ public class RulesCommentWriter {
   private void sendRulesMessage(Comment comment, String message, int startIndex, int endIndex, String entityUrl) {
     SendMessage sendRulesMessage = new SendMessage(String.valueOf(comment.getChannel().getId()), message);
     sendRulesMessage.setReplyToMessageId(comment.getUpdate().getMessage().getMessageId());
-    
+
     List<MessageEntity> entities = new ArrayList<>();
     MessageEntity boldText = new MessageEntity("bold", startIndex, endIndex);
     entities.add(boldText);
-    
+
     if (entityUrl != null) {
       int offset = message.indexOf("LIEN");
       int length = "LIEN".length();
@@ -77,9 +80,9 @@ public class RulesCommentWriter {
       linkEntity.setUrl(entityUrl);
       entities.add(linkEntity);
     }
-    
+
     sendRulesMessage.setEntities(entities);
-    
+
     try {
       comment.getClient().execute(sendRulesMessage);
     } catch (TelegramApiException e) {
@@ -90,49 +93,78 @@ public class RulesCommentWriter {
   public void writeRulesInComments(Comment comment) {
     switch (comment.getChannel()) {
       case GERMAN -> sendRulesMessage(
-        comment, 
-        germanRulesMessage, 
-        germanRulesMessage.indexOf("Liebe"), 
-        germanRulesMessage.indexOf("sperren.") + 6,
-        null
+          comment,
+          germanRulesMessage,
+          germanRulesMessage.indexOf("Liebe"),
+          germanRulesMessage.indexOf("sperren.") + 6,
+          null
       );
       case SPANISH -> sendRulesMessage(
-        comment, 
-        spanishRulesMessage, 
-        spanishRulesMessage.indexOf("Queridos"), 
-        33,
-        null
+          comment,
+          spanishRulesMessage,
+          spanishRulesMessage.indexOf("Queridos"),
+          33,
+          null
       );
       case ITALIAN -> sendRulesMessage(
-        comment, 
-        italianRulesMessage, 
-        italianRulesMessage.indexOf("Cari"), 
-        italianRulesMessage.lastIndexOf("."),
-        null
+          comment,
+          italianRulesMessage,
+          italianRulesMessage.indexOf("Cari"),
+          italianRulesMessage.lastIndexOf("."),
+          null
       );
       case FRENCH -> sendRulesMessage(
-        comment, 
-        frenchRulesMessage, 
-        frenchRulesMessage.indexOf("Chers"), 
-        frenchRulesMessage.indexOf("bloquer."),
-        null
+          comment,
+          frenchRulesMessage,
+          frenchRulesMessage.indexOf("Chers"),
+          frenchRulesMessage.indexOf("bloquer."),
+          null
       );
       case FRENCH2 -> sendRulesMessage(
-        comment, 
-        french2RulesMessage, 
-        french2RulesMessage.indexOf("Chers"), 
-        french2RulesMessage.indexOf("bloquer."),
-        "https://t.me/c/2056162680/4662"
+          comment,
+          french2RulesMessage,
+          french2RulesMessage.indexOf("Chers"),
+          french2RulesMessage.indexOf("bloquer."),
+          "https://t.me/c/2056162680/4662"
       );
     }
   }
 
-  public void sendStatsToAdmin(int counter, TelegramClient client) {
+  public void sendStatsToAdmin(Map<Channels, AtomicInteger> commentsCounterMap, TelegramClient client) {
     log.info("Scheduled work started");
-    SendMessage sendRulesMessage = new SendMessage(String.valueOf(Channels.ADMIN.getId()), statisticsMessageStart + counter + statisticsMessageEnd);
+
+    if (commentsCounterMap.isEmpty()) {
+      log.warn("Comments counter map is empty");
+      return;
+    }
+
+    StringBuilder statsMessage = new StringBuilder(statisticsMessageStart + "\n\n");
+    int totalComments = 0;
+
+    for (Map.Entry<Channels, AtomicInteger> entry : commentsCounterMap.entrySet()) {
+      if (entry.getKey() != Channels.ADMIN && entry.getKey() != Channels.TEST) {
+        int count = entry.getValue().get();
+        totalComments += count;
+        statsMessage.append(entry.getKey().name())
+            .append(": ")
+            .append(count)
+            .append(" comments\n");
+      }
+    }
+
+    statsMessage.append("\nTotal: ")
+        .append(totalComments)
+        .append(statisticsMessageEnd);
+
+    SendMessage sendStatsMessage = new SendMessage(
+        String.valueOf(Channels.ADMIN.getId()),
+        statsMessage.toString()
+    );
+
     try {
-      client.execute(sendRulesMessage);
+      client.execute(sendStatsMessage);
     } catch (TelegramApiException e) {
+      log.error("Error sending stats message", e);
       throw new RuntimeException(e);
     }
   }
