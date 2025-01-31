@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.BanChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 @Slf4j
@@ -18,19 +18,19 @@ public class CommentRemover {
     log.info("I'm sending message to admin group, deleting comment and banning sender");
     String userName = comment.getUpdate().getMessage().getFrom().getUserName();
     long id = comment.getUpdate().getMessage().getFrom().getId();
-    
+
     // Получаем оригинальный текст со всеми entity
     String originalText = comment.getUpdate().getMessage().getText();
     if (comment.getUpdate().getMessage().getEntities() != null) {
-        StringBuilder fullText = new StringBuilder(originalText);
-        for (MessageEntity entity : comment.getUpdate().getMessage().getEntities()) {
-            if (entity.getType().equals("text_link")) {
-                fullText.append("\nСкрытая ссылка: ").append(entity.getUrl());
-            }
+      StringBuilder fullText = new StringBuilder(originalText);
+      for (MessageEntity entity : comment.getUpdate().getMessage().getEntities()) {
+        if (entity.getType().equals("text_link")) {
+          fullText.append("\nClickable text link: ").append(entity.getUrl());
         }
-        originalText = fullText.toString();
+      }
+      originalText = fullText.toString();
     }
-    
+
     String message = "Comment content:"
         + System.lineSeparator() + originalText
         + System.lineSeparator() + "Comment written by: @" + userName
