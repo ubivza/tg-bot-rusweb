@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class CommentRemover {
 
   public void handle(Comment comment) {
+    //переписать логику на случай если не удается забанить, чтобы отправлялся текст комментария со всеми полями но и писалось уведомление для админов что не удалось забанить
     log.info("I'm sending message to admin group, deleting comment and banning sender");
     ReplyHandler.incrementSpamCounter(comment.getChannel());
     String userName = comment.getUpdate().getMessage().getFrom().getUserName();

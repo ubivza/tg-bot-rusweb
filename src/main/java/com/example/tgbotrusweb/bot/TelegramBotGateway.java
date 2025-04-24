@@ -8,7 +8,6 @@ import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -93,20 +92,10 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   }
 
   private Channels getChannel(Update update) {
-    if (Objects.equals(update.getMessage().getChatId(), Channels.TEST.getId())) {
-      return Channels.TEST;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.ITALIAN.getId())) {
-      return Channels.ITALIAN;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.GERMAN.getId())) {
-      return Channels.GERMAN;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.FRENCH.getId())) {
-      return Channels.FRENCH;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.FRENCH2.getId())) {
-      return Channels.FRENCH2;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.ENGLISH.getId())) {
-      return Channels.ENGLISH;
-    } else if (Objects.equals(update.getMessage().getChatId(), Channels.SPANISH.getId())) {
-      return Channels.SPANISH;
+    var channelId = Channels.getChannelById(update.getMessage().getChatId());
+
+    if (channelId.isPresent()) {
+      return channelId.get();
     } else {
       throw new RuntimeException("Chat id is not valid");
     }
@@ -117,18 +106,10 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   }
 
   private AdminsChannels getAdminsChannel(Update update) {
-    if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ITALY.getId())) {
-      return AdminsChannels.ITALY;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GERMAN.getId())) {
-      return AdminsChannels.GERMAN;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.FRENCH.getId())) {
-      return AdminsChannels.FRENCH;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.ENGLISH.getId())) {
-      return AdminsChannels.ENGLISH;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.GENERAL.getId())) {
-      return AdminsChannels.GENERAL;
-    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.SPANISH.getId())) {
-      return AdminsChannels.SPANISH;
+    var adminChannelId = AdminsChannels.getAdminsChannelById(update.getMessage().getMessageThreadId());
+
+    if (adminChannelId.isPresent()) {
+      return adminChannelId.get();
     } else {
       throw new RuntimeException("Message thread id is not valid");
     }

@@ -1,5 +1,7 @@
 package com.example.tgbotrusweb.logic.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import lombok.Getter;
 
@@ -21,4 +23,10 @@ public enum Channels {
   }
 
   private final ResourceBundle BUNDLE = ResourceBundle.getBundle("channels");
+
+  public static Optional<Channels> getChannelById(Long id) {
+    return Arrays.stream(Channels.values())
+        .filter(x -> id.equals(x.getId()))
+        .findAny();
+  }
 }
