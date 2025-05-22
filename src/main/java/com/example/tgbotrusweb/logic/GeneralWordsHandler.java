@@ -15,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 public class GeneralWordsHandler extends Handler {
   private final CommentRemover commentRemover;
   private static List<String> generalWords;
-  private static final String REGEX_INVISIBLE_SYMBOL = "\u2063";
+  private static final String REGEX_INVISIBLE_SYMBOLS = "[\u2063\u2062]";
 
   @Override
   public void handleUpdate(Comment comment) {
     boolean isCommentNotBanned = true;
     for (String s : generalWords) {
       if (!s.isBlank()) {
-        String commentTextLowerCase = getCommentTextWithoutInvisibleSeparator(comment);
+        String commentTextLowerCase = getCommentTextWithoutInvisibleSeparators(comment);
         if (Pattern.compile(s.toLowerCase().trim()).matcher(commentTextLowerCase).find()) {
           log.info("Comment contains link and general word: " + s);
           isCommentNotBanned = false;
@@ -42,7 +42,7 @@ public class GeneralWordsHandler extends Handler {
     generalWords = FileDataDownloader.readFromGeneralFile();
   }
 
-  private static String getCommentTextWithoutInvisibleSeparator(Comment comment) {
-    return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOL, "");
+  private static String getCommentTextWithoutInvisibleSeparators(Comment comment) {
+    return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOLS, "");
   }
 }

@@ -166,4 +166,12 @@ public class InputValidatorTest {
     assertEquals(true, result);
   }
 
+  @Test
+  void isValidWordsInput17() {
+    String input = "/add $";
+
+    Boolean result = inputValidator.isValidWordsInput(input);
+
+    assertEquals(true, result);
+  }
 }

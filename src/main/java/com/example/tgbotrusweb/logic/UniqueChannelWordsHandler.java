@@ -21,7 +21,7 @@ public class UniqueChannelWordsHandler extends Handler {
   private static List<String> italianWords;
   private static List<String> frenchWords;
   private static List<String> spanishWords;
-  private static final String REGEX_INVISIBLE_SYMBOL = "\u2063";
+  private static final String REGEX_INVISIBLE_SYMBOLS = "[\u2063\u2062]";
 
   @Override
   public void handleUpdate(Comment comment) {
@@ -70,7 +70,7 @@ public class UniqueChannelWordsHandler extends Handler {
   }
 
   private static String getCommentTextWithoutInvisibleSeparator(Comment comment) {
-    return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOL, "");
+    return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOLS, "");
   }
 
   @PostConstruct
