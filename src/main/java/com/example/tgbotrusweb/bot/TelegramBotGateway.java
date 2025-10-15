@@ -43,7 +43,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
 
   @Override
   public String getBotToken() {
-    return "7945101745:AAEqibTBhe355A7G2fY3uDE5OIp4yPUfGb8";
+    return "7585455690:AAEMEi6mDLuol1iAdNvE11n8uhPESkWkbmw";
   } //7945101745:AAEqibTBhe355A7G2fY3uDE5OIp4yPUfGb8
 
   @Override
@@ -107,6 +107,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
       return Channels.ENGLISH;
     } else if (Objects.equals(update.getMessage().getChatId(), Channels.SPANISH.getId())) {
       return Channels.SPANISH;
+    } else if (Objects.equals(update.getMessage().getChatId(), Channels.RUSSIAN.getId())) {
+      return Channels.RUSSIAN;
     } else {
       throw new RuntimeException("Chat id is not valid");
     }
@@ -129,6 +131,8 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
       return AdminsChannels.GENERAL;
     } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.SPANISH.getId())) {
       return AdminsChannels.SPANISH;
+    } else if (Objects.equals(update.getMessage().getMessageThreadId(), AdminsChannels.RUSSIAN.getId())) {
+      return AdminsChannels.RUSSIAN;
     } else {
       throw new RuntimeException("Message thread id is not valid");
     }

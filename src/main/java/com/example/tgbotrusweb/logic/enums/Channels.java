@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum Channels {
+  RUSSIAN,
   ITALIAN,
   FRENCH,
   FRENCH2,

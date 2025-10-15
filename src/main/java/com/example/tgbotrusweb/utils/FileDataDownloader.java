@@ -42,4 +42,8 @@ public class FileDataDownloader {
   public static List<String> readFromEnglishFile() {
     return readFromFile("english_words");
   }
+
+  public static List<String> readFromRussianFile() {
+    return readFromFile("russian_words");
+  }
 }
