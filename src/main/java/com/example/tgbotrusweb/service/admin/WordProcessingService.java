@@ -3,7 +3,6 @@ package com.example.tgbotrusweb.service.admin;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.repository.WordFileRepository;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -58,6 +57,7 @@ public class WordProcessingService {
 
   private String resolveFileName(AdminsChannels channel) {
     return switch (channel) {
+      case RUSSIAN -> "src/main/resources/words/russian_words";
       case ITALY -> "src/main/resources/words/italian_words";
       case FRENCH -> "src/main/resources/words/french_words";
       case GERMAN -> "src/main/resources/words/german_words";

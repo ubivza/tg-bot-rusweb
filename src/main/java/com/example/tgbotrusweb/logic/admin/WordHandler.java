@@ -73,6 +73,7 @@ public class WordHandler {
       case GERMAN -> uniqueChannelWordsHandler.updateGermanWords();
       case GENERAL -> generalWordsHandler.updateWords();
       case SPANISH -> uniqueChannelWordsHandler.updateSpanishWords();
+      case RUSSIAN -> uniqueChannelWordsHandler.updateRussianWords();
     }
   }
 }

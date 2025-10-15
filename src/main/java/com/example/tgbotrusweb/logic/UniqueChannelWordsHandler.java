@@ -21,7 +21,8 @@ public class UniqueChannelWordsHandler extends Handler {
   private static List<String> italianWords;
   private static List<String> frenchWords;
   private static List<String> spanishWords;
-  private static final String REGEX_INVISIBLE_SYMBOL = "\u2063";
+  private static List<String> russianWords;
+  private static final String REGEX_INVISIBLE_SYMBOLS = "[\u2063\u2062]";
 
   @Override
   public void handleUpdate(Comment comment) {
@@ -33,6 +34,7 @@ public class UniqueChannelWordsHandler extends Handler {
       case ITALIAN -> checkIfCommentContainsUniqueWord(italianWords, comment, channel.name());
       case FRENCH, FRENCH2 -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
       case SPANISH -> checkIfCommentContainsUniqueWord(spanishWords, comment, channel.name());
+      case RUSSIAN -> checkIfCommentContainsUniqueWord(russianWords, comment, channel.name());
     }
   }
 
@@ -56,6 +58,11 @@ public class UniqueChannelWordsHandler extends Handler {
     frenchWords = readFromFrenchFile();
   }
 
+  public void updateRussianWords() {
+    log.info("Russian words updated in memory");
+    russianWords = readFromRussianFile();
+  }
+
   private void checkIfCommentContainsUniqueWord(List<String> words, Comment comment, String language) {
     for (String s : words) {
       if (!s.isBlank()) {
@@ -70,7 +77,7 @@ public class UniqueChannelWordsHandler extends Handler {
   }
 
   private static String getCommentTextWithoutInvisibleSeparator(Comment comment) {
-    return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOL, "");
+    return comment.getUpdate().getMessage().getText().toLowerCase().replaceAll(REGEX_INVISIBLE_SYMBOLS, "");
   }
 
   @PostConstruct
@@ -81,6 +88,7 @@ public class UniqueChannelWordsHandler extends Handler {
     italianWords = readFromItalianFile();
     frenchWords = readFromFrenchFile();
     spanishWords = readFromSpanishFile();
+    russianWords = readFromRussianFile();
   }
 
   public void updateSpanishWords() {

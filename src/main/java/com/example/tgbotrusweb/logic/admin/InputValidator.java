@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InputValidator {
 
-  private static final String VALID_WORDS_REGEX_ADD = "^/add\\s([\\p{L}\\d_'’\\-\\s]+;?)+$";
+  private static final String VALID_WORDS_REGEX_ADD = "^/add\\s([\\p{L}\\d_'’\\-\\s€$]+;?)+$";
   private static final String VALID_WORD_SHOW = "/show";
 
 
