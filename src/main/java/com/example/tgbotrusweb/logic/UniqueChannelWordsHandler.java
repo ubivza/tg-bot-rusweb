@@ -29,11 +29,9 @@ public class UniqueChannelWordsHandler extends Handler {
     Channels channel = comment.getChannel();
     log.info(channel + "");
     switch (channel) {
-      case GERMAN -> checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
-      case ENGLISH -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
-      case ITALIAN -> checkIfCommentContainsUniqueWord(italianWords, comment, channel.name());
-      case FRENCH, FRENCH2 -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
-      case SPANISH -> checkIfCommentContainsUniqueWord(spanishWords, comment, channel.name());
+      case SCHWARZER_HAUFEN -> checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
+      case WATCH_DOG -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
+      case GAVROCHE -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
       case RUSSIAN -> checkIfCommentContainsUniqueWord(russianWords, comment, channel.name());
     }
   }

@@ -121,41 +121,6 @@ public class RulesCommentWriter {
 
   public void writeRulesInComments(Comment comment) {
     switch (comment.getChannel()) {
-      case GERMAN -> sendRulesMessage(
-          comment,
-          germanRulesMessage,
-          germanRulesMessage.indexOf("Liebe"),
-          germanRulesMessage.indexOf("sperren.") + 6,
-          null
-      );
-      case SPANISH -> sendRulesMessage(
-          comment,
-          spanishRulesMessage,
-          spanishRulesMessage.indexOf("Queridos"),
-          33,
-          null
-      );
-      case ITALIAN -> sendRulesMessage(
-          comment,
-          italianRulesMessage,
-          italianRulesMessage.indexOf("Cari"),
-          italianRulesMessage.lastIndexOf("."),
-          null
-      );
-      case FRENCH -> sendRulesMessage(
-          comment,
-          frenchRulesMessage,
-          frenchRulesMessage.indexOf("Chers"),
-          frenchRulesMessage.indexOf("bloquer."),
-          null
-      );
-      case FRENCH2 -> sendRulesMessage(
-          comment,
-          french2RulesMessage,
-          french2RulesMessage.indexOf("Chers"),
-          french2RulesMessage.indexOf("bloquer."),
-          "https://t.me/c/2056162680/4662"
-      );
       case RUSSIAN -> sendRulesMessage(
           comment,
           russianRulesMessage,

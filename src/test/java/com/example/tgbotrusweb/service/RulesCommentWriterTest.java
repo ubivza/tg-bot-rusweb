@@ -42,10 +42,10 @@ class RulesCommentWriterTest {
     }
 
     @Test
-    void writeRulesInComments_German() throws TelegramApiException {
+    void writeRulesInComments_SCHWARZER_HAUFEN() throws TelegramApiException {
         // Подготовка
         comment = Comment.builder()
-                .channel(Channels.GERMAN)
+                .channel(Channels.SCHWARZER_HAUFEN)
                 .update(update)
                 .client(telegramClient)
                 .build();
@@ -55,17 +55,17 @@ class RulesCommentWriterTest {
 
         // Проверка
         verify(telegramClient).execute(argThat((SendMessage sendMessage) -> {
-            return sendMessage.getChatId().equals(String.valueOf(Channels.GERMAN.getId())) &&
+            return sendMessage.getChatId().equals(String.valueOf(Channels.SCHWARZER_HAUFEN.getId())) &&
                    sendMessage.getText().contains("Liebe Freunde") &&
                    sendMessage.getReplyToMessageId().equals(123);
         }));
     }
 
     @Test
-    void writeRulesInComments_French2_WithLink() throws TelegramApiException {
+    void writeRulesInComments_SCHWARZER_HAUFEN_WithLink() throws TelegramApiException {
         // Подготовка
         comment = Comment.builder()
-                .channel(Channels.FRENCH2)
+                .channel(Channels.SCHWARZER_HAUFEN)
                 .update(update)
                 .client(telegramClient)
                 .build();
@@ -75,7 +75,7 @@ class RulesCommentWriterTest {
 
         // Проверка
         verify(telegramClient).execute(argThat((SendMessage sendMessage) -> {
-            return sendMessage.getChatId().equals(String.valueOf(Channels.FRENCH2.getId())) &&
+            return sendMessage.getChatId().equals(String.valueOf(Channels.SCHWARZER_HAUFEN.getId())) &&
                    sendMessage.getText().contains("LIEN") &&
                    !sendMessage.getEntities().isEmpty() &&
                    sendMessage.getEntities().stream()
@@ -88,7 +88,7 @@ class RulesCommentWriterTest {
     void handleTelegramApiException() throws TelegramApiException {
         // Подготовка
         comment = Comment.builder()
-                .channel(Channels.GERMAN)
+                .channel(Channels.RUSSIAN)
                 .update(update)
                 .client(telegramClient)
                 .build();

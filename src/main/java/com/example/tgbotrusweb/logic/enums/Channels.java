@@ -8,13 +8,10 @@ import lombok.Getter;
 @Getter
 public enum Channels {
   RUSSIAN,
-  ITALIAN,
-  FRENCH,
-  FRENCH2,
-  GERMAN,
-  ENGLISH,
   ADMIN,
-  SPANISH,
+  GAVROCHE,
+  WATCH_DOG,
+  SCHWARZER_HAUFEN,
   TEST;
 
   public final Long id;
