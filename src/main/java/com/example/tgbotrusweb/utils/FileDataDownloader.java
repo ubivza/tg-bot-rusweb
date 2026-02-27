@@ -1,21 +1,25 @@
 package com.example.tgbotrusweb.utils;
 
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileDataDownloader {
 
-  private static final String RESOURCE_PATH = "src/main/resources/words/";
-
-  public static List<String> readFromFile(String filename) {
+  private static List<String> readFromFile(String fileName) {
     try {
-      return Files.readAllLines(Paths.get(RESOURCE_PATH + filename), StandardCharsets.UTF_8);
+      ClassPathResource resource = new ClassPathResource("words/" + fileName);
+
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+        return reader.lines().collect(Collectors.toList());
+      }
     } catch (IOException e) {
-      System.err.println("File not found: " + filename);
-      throw new RuntimeException(e);
+      throw new RuntimeException("File not found: " + fileName, e);
     }
   }
 

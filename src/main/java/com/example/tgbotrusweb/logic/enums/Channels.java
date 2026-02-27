@@ -12,7 +12,8 @@ public enum Channels {
   GAVROCHE,
   WATCH_DOG,
   SCHWARZER_HAUFEN,
-  TEST;
+  TEST,
+  RUSSIAN_LUGANSK;
 
   public final Long id;
 

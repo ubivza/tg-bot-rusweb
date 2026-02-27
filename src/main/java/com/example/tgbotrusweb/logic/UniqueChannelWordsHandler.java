@@ -32,7 +32,7 @@ public class UniqueChannelWordsHandler extends Handler {
       case SCHWARZER_HAUFEN -> checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
       case WATCH_DOG -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
       case GAVROCHE -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
-      case RUSSIAN -> checkIfCommentContainsUniqueWord(russianWords, comment, channel.name());
+      case RUSSIAN, RUSSIAN_LUGANSK -> checkIfCommentContainsUniqueWord(russianWords, comment, channel.name());
     }
   }
 

@@ -57,13 +57,13 @@ public class WordProcessingService {
 
   private String resolveFileName(AdminsChannels channel) {
     return switch (channel) {
-      case RUSSIAN -> "src/main/resources/words/russian_words";
-      case ITALY -> "src/main/resources/words/italian_words";
-      case FRENCH -> "src/main/resources/words/french_words";
-      case GERMAN -> "src/main/resources/words/german_words";
-      case ENGLISH -> "src/main/resources/words/english_words";
-      case SPANISH -> "src/main/resources/words/spanish_words";
-      case GENERAL -> "src/main/resources/words/general_words";
+      case RUSSIAN -> "russian_words";
+      case ITALY -> "italian_words";
+      case FRENCH -> "french_words";
+      case GERMAN -> "german_words";
+      case ENGLISH -> "english_words";
+      case SPANISH -> "spanish_words";
+      case GENERAL -> "general_words";
     };
   }
 

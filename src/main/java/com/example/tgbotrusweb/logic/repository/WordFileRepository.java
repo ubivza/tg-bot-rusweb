@@ -1,13 +1,17 @@
 package com.example.tgbotrusweb.logic.repository;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,11 +19,12 @@ import org.springframework.stereotype.Component;
 public class WordFileRepository {
 
   public Set<String> readWordsFromFile(String fileName) {
-    try (var lines = Files.lines(Paths.get(fileName))) {
-      return lines.map(String::trim)
-          .map(String::toLowerCase)
-          .filter(line -> !line.isEmpty())
-          .collect(Collectors.toSet());
+    try {
+      ClassPathResource resource = new ClassPathResource("words/" + fileName);
+
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+        return reader.lines().collect(Collectors.toSet());
+      }
     } catch (IOException e) {
       return Collections.emptySet();
     }
