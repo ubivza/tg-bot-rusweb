@@ -3,15 +3,16 @@ package com.example.tgbotrusweb.service;
 import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.domain.CommentStatistics;
 import com.example.tgbotrusweb.logic.enums.Channels;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -125,7 +126,7 @@ public class RulesCommentWriter {
           comment,
           russianRulesMessage,
           russianRulesMessage.indexOf("Дорогие"),
-          russianRulesMessage.indexOf("источников.") + 11,
+          russianRulesMessage.indexOf("источников.") + "источников.".length(),
           null
       );
     }

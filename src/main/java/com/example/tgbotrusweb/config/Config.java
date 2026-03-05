@@ -2,6 +2,7 @@ package com.example.tgbotrusweb.config;
 
 import com.example.tgbotrusweb.logic.GeneralWordsHandler;
 import com.example.tgbotrusweb.logic.LinksHandler;
+import com.example.tgbotrusweb.logic.NaiveCheckPassedHandler;
 import com.example.tgbotrusweb.logic.ReplyHandler;
 import com.example.tgbotrusweb.logic.UniqueChannelWordsHandler;
 import com.example.tgbotrusweb.service.CommentRemover;
@@ -17,6 +18,7 @@ public class Config {
   private final CommentRemover commentRemover;
 
   private final RulesCommentWriter commentWriter;
+  private final NaiveCheckPassedHandler naiveCheckPassedHandler;
 
   @Bean
   public ReplyHandler replyHandler() {
@@ -27,7 +29,7 @@ public class Config {
 
   @Bean
   public LinksHandler linksHandler() {
-    LinksHandler linksHandler = new LinksHandler();
+    LinksHandler linksHandler = new LinksHandler(naiveCheckPassedHandler);
     linksHandler.setNext(generalWordsHandler());
     return linksHandler;
   }
@@ -41,6 +43,6 @@ public class Config {
 
   @Bean
   public UniqueChannelWordsHandler uniqueChannelWordsHandler() {
-    return new UniqueChannelWordsHandler(commentRemover);
+    return new UniqueChannelWordsHandler(naiveCheckPassedHandler, commentRemover);
   }
 }

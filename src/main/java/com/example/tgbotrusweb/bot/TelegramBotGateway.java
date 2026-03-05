@@ -6,12 +6,6 @@ import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.domain.admin.AdminMessage;
 import com.example.tgbotrusweb.logic.enums.AdminsChannels;
 import com.example.tgbotrusweb.logic.enums.Channels;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -23,6 +17,13 @@ import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateC
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 @Component
 @Slf4j
 public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
@@ -30,7 +31,7 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private final TelegramClient telegramClient;
   private final ReplyHandler replyHandler;
   private final WordHandler wordHandler;
-  private static final Executor executor = Executors.newFixedThreadPool(50);
+  private static final Executor executor = Executors.newFixedThreadPool(16);
   private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
   private static final int initialDelay = 20 - LocalDateTime.now().getHour();
 
@@ -118,5 +119,4 @@ public class TelegramBotGateway implements SpringLongPollingBot, LongPollingSing
   private boolean isUpdateFromOurAdminsChannel(Update update) {
     return update.getMessage().getChatId().equals(Channels.ADMIN.getId());
   }
-
 }

@@ -1,20 +1,27 @@
 package com.example.tgbotrusweb.logic;
 
-import static com.example.tgbotrusweb.utils.FileDataDownloader.*;
-
 import com.example.tgbotrusweb.logic.domain.Comment;
 import com.example.tgbotrusweb.logic.enums.Channels;
 import com.example.tgbotrusweb.logic.interfaces.Handler;
 import com.example.tgbotrusweb.service.CommentRemover;
 import jakarta.annotation.PostConstruct;
-import java.util.List;
-import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static com.example.tgbotrusweb.utils.FileDataDownloader.readFromEnglishFile;
+import static com.example.tgbotrusweb.utils.FileDataDownloader.readFromFrenchFile;
+import static com.example.tgbotrusweb.utils.FileDataDownloader.readFromGermanFile;
+import static com.example.tgbotrusweb.utils.FileDataDownloader.readFromItalianFile;
+import static com.example.tgbotrusweb.utils.FileDataDownloader.readFromRussianFile;
+import static com.example.tgbotrusweb.utils.FileDataDownloader.readFromSpanishFile;
 
 @Slf4j
 @RequiredArgsConstructor
 public class UniqueChannelWordsHandler extends Handler {
+  private final NaiveCheckPassedHandler naiveCheckPassedHandler;
   private final CommentRemover commentRemover;
   private static List<String> germanWords;
   private static List<String> englishWords;
@@ -28,11 +35,19 @@ public class UniqueChannelWordsHandler extends Handler {
   public void handleUpdate(Comment comment) {
     Channels channel = comment.getChannel();
     log.info(channel + "");
+    boolean contains = false;
+
     switch (channel) {
-      case SCHWARZER_HAUFEN -> checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
-      case WATCH_DOG -> checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
-      case GAVROCHE -> checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
-      case RUSSIAN, RUSSIAN_LUGANSK -> checkIfCommentContainsUniqueWord(russianWords, comment, channel.name());
+      case SCHWARZER_HAUFEN -> contains = checkIfCommentContainsUniqueWord(germanWords, comment, channel.name());
+      case WATCH_DOG -> contains = checkIfCommentContainsUniqueWord(englishWords, comment, channel.name());
+      case GAVROCHE -> contains = checkIfCommentContainsUniqueWord(frenchWords, comment, channel.name());
+      case RUSSIAN, RUSSIAN_LUGANSK -> contains = checkIfCommentContainsUniqueWord(russianWords, comment, channel.name());
+    }
+
+    if (contains) {
+      commentRemover.handle(comment);
+    } else {
+      naiveCheckPassedHandler.handleUpdate(comment);
     }
   }
 
@@ -61,17 +76,17 @@ public class UniqueChannelWordsHandler extends Handler {
     russianWords = readFromRussianFile();
   }
 
-  private void checkIfCommentContainsUniqueWord(List<String> words, Comment comment, String language) {
+  private boolean checkIfCommentContainsUniqueWord(List<String> words, Comment comment, String language) {
     for (String s : words) {
       if (!s.isBlank()) {
         String commentTextLowerCase = getCommentTextWithoutInvisibleSeparator(comment);
         if (Pattern.compile(s.toLowerCase()).matcher(commentTextLowerCase).find()) {
           log.info("r " + language + " word: " + s);
-          commentRemover.handle(comment);
-          break;
+          return true;
         }
       }
     }
+    return false;
   }
 
   private static String getCommentTextWithoutInvisibleSeparator(Comment comment) {

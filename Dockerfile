@@ -10,6 +10,8 @@ RUN gradle --no-daemon clean bootJar
 
 FROM openjdk:17-ea-jdk-slim
 
+ENV PYTHON_SERVICE_URL=http://python-backend:8000
+
 WORKDIR /app
 
 COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
